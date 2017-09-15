@@ -182,6 +182,7 @@ var RE = {
 		var _self = this;
 		var html = '<hr><div><br></div>';
 		_self.insertHtml(html);
+		_self.getEditItem({});
 	},
 	insertLink: function insertLink(name, url) {
 		var _self = this;
