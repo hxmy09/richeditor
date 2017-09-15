@@ -463,7 +463,7 @@ public abstract class RichEditor extends WebView {
         exec("javascript:RE.insertImage('" + url +"',"+ id + ", " + width + ","+ height + ");");
     }
 
-    public void deleteImageByUri(Long id){
+    public void deleteImageById(Long id){
         exec("javascript:RE.saveRange();");
         exec("javascript:RE.removeImage("+id+");");
     }

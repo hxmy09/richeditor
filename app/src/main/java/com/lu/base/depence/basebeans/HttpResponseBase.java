@@ -17,7 +17,7 @@ public class HttpResponseBase<T> implements Serializable{
     @SerializedName("data")
     private T data;
 
-    public boolean isSucceful()
+    public boolean isSuccessful()
     {
         return state>=0;
     }

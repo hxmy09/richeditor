@@ -169,7 +169,7 @@ var RE = {
 			var id = img.getAttribute('data-id');
 			window.location.href = IMAGE_SCHEME + encodeURI(id);
 		} else {
-			if (e.which == 8) {
+			if (evt.which == 8) {
 				AndroidInterface.staticWords();
 			}
 			var items = [];

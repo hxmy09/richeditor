@@ -14,7 +14,7 @@ public class HttpResBase2Object<T> implements Function<HttpResponseBase<T>,T> {
 
     @Override
     public T apply(HttpResponseBase<T> tHttpResponseBase) throws Exception {
-        if(tHttpResponseBase.isSucceful() && tHttpResponseBase.getData() != null) {
+        if(tHttpResponseBase.isSuccessful() && tHttpResponseBase.getData() != null) {
             return tHttpResponseBase.getData();
         }else{
             throw new Exception(tHttpResponseBase.getError());

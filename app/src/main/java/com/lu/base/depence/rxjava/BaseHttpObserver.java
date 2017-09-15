@@ -16,7 +16,7 @@ public abstract class BaseHttpObserver<T> implements Observer<HttpResponseBase<T
 
     @Override
     public void onNext(HttpResponseBase<T> value) {
-        if (value.isSucceful()) {
+        if (value.isSuccessful()) {
             T t = value.getData();
             onHandleSuccess(t);
         } else {

@@ -153,8 +153,10 @@ public class SimpleRichEditor extends RichEditor {
                 mSelectController.reset();
                 for (RichEditor.Type t :
                         types) {
-                    if (!isInSelectController(t.getTypeCode()))
+                    if (!mSelectController.contain(t.getTypeCode()))
                         mLuBottomMenu.setItemSelected(t.getTypeCode(), true);
+                    else
+                        mSelectController.changeState(t.getTypeCode());
 
                 }
 

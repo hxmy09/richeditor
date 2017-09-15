@@ -8,6 +8,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 
+import com.lu.richtexteditor.R;
+
 /**
  * Created by 陆正威 on 2017/9/12.
  */
@@ -31,21 +33,21 @@ public class DeleteDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new AlertDialog.Builder(getActivity()).setMessage("是否删除这张图片?")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        return new AlertDialog.Builder(getActivity()).setMessage(R.string.delete_pic)
+                .setPositiveButton(R.string.general_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog1, int which) {
                         if(listener!=null)
                             listener.onConfirmButtonClick(imageId);
                     }
                 })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.general_cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog1, int which) {
                         if(listener!= null)
                             listener.onCancelButtonClick();
                     }
-                }).setTitle("操作").create();
+                }).setTitle(R.string.handles).create();
     }
 
     public Long getImageId() {

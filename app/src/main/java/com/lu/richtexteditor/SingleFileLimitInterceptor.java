@@ -13,13 +13,14 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static com.facebook.common.util.ByteConstants.KB;
+import static com.facebook.common.util.ByteConstants.MB;
 
 /**
  * Created by 陆正威 on 2017/9/12.
  */
 public class SingleFileLimitInterceptor implements FileChooseInterceptor {
 
-    private static final long MAX_FILE_SIZE_ORIGINAL = 200 * KB; // 200K
+    private static final long MAX_FILE_SIZE_ORIGINAL = 2 * MB; // 2MB
 
     public SingleFileLimitInterceptor() {}
 
@@ -52,7 +53,7 @@ public class SingleFileLimitInterceptor implements FileChooseInterceptor {
                                            final int resultCode,
                                            final PickerAction action, final ArrayList<String> confirmedFiles) {
         new AlertDialog.Builder(context)
-                .setMessage("图片大小超过限制！")
+                .setMessage(R.string.pic_out_of_size)
                 .setPositiveButton(
                         R.string.general_ok, new DialogInterface.OnClickListener() {
                             @Override

@@ -82,7 +82,7 @@ public class LinkDialog extends DialogFragment {
             }
         });
 
-        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);//remove title
         return dialog;
     }
 
