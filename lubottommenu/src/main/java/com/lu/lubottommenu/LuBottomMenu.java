@@ -304,6 +304,11 @@ public class LuBottomMenu extends ViewGroup {
             fillMenu(mDisplayMenus.get(mDisplayRowNum - 1), parent);
     }
 
+    /**
+     * @param menu 需要填充的布局
+     * @param parent  聚焦节点
+     *                填充对应布局
+     */
     private void fillMenu(LinearLayout menu, MenuItem parent) {
 
         if (parent.getNextLevel() == null) return;

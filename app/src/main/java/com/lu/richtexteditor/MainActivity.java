@@ -128,8 +128,13 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
         mRichTextView.setOnEditorClickListener(this);
         mRichTextView.setOnTextLengthChangeListener(new RichEditor.OnTextLengthChangeListener() {
             @Override
-            public void onTextLengthChange(long length) {
-                mToolbar.setTitle(length+"字");
+            public void onTextLengthChange(final long length) {
+                mToolbar.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mToolbar.setTitle(length+"字");
+                    }
+                });
             }
         });
         mRichTextView.setLuBottomMenu(mLuBottomMenu);
