@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.webkit.JavascriptInterface;
+import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -70,6 +72,10 @@ public abstract class RichEditor extends WebView {
         void onImageClick(Long url);
     }
 
+    public interface OnTextLengthChangeListener{
+        void onTextLengthChange(long length);
+    }
+
     private static final String SETUP_HTML = "file:///android_asset/editor.html";
     private static final String CALLBACK_SCHEME = "callback://";
     private static final String STATE_SCHEME = "state://";
@@ -86,6 +92,7 @@ public abstract class RichEditor extends WebView {
     private OnLinkClickListener mOnLinkClickListener;
     private OnFocusChangeListener mOnFocusChangeListener;
     private OnImageClickListener mOnImageClickListener;
+    private OnTextLengthChangeListener mOnTextLengthChangeListener;
 
 
     public RichEditor(Context context) {
@@ -117,6 +124,10 @@ public abstract class RichEditor extends WebView {
 
     public void setOnTextChangeListener(OnTextChangeListener listener) {
         mTextChangeListener = listener;
+    }
+
+    public void setOnTextLengthChangeListener(OnTextLengthChangeListener onTextLengthChangeListener) {
+        this.mOnTextLengthChangeListener = onTextLengthChangeListener;
     }
 
     public void setOnDecorationChangeListener(OnDecorationStateListener listener) {
@@ -537,6 +548,18 @@ public abstract class RichEditor extends WebView {
         }
     }
 
+    protected class EditorWebVIewClient2 extends WebChromeClient{
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            super.onProgressChanged(view, newProgress);
+        }
+
+        @Override
+        public boolean onJsBeforeUnload(WebView view, String url, String message, JsResult result) {
+            return super.onJsBeforeUnload(view, url, message, result);
+        }
+    }
+
     protected class EditorWebViewClient extends WebViewClient {
         @Override
         public void onPageFinished(WebView view, String url) {
@@ -566,7 +589,6 @@ public abstract class RichEditor extends WebView {
                 stateCheck(decode);
                 return true;
             }
-
             if(TextUtils.indexOf(url,LINK_CHANGE_SCHEME) == 0){
                 linkChangeCallBack(decode);
                 return true;
@@ -602,6 +624,8 @@ public abstract class RichEditor extends WebView {
         @JavascriptInterface
         public void staticWords(long num){
             mContentLength = num;
+            if(mOnTextLengthChangeListener != null)
+                mOnTextLengthChangeListener.onTextLengthChange(num);
         }
     }
 }

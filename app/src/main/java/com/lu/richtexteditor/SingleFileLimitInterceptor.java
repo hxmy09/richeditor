@@ -16,6 +16,7 @@ import static com.facebook.common.util.ByteConstants.KB;
 import static com.facebook.common.util.ByteConstants.MB;
 
 /**
+ * SImagePicker 单文件大小限制拦截器
  * Created by 陆正威 on 2017/9/12.
  */
 public class SingleFileLimitInterceptor implements FileChooseInterceptor {

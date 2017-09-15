@@ -1,12 +1,16 @@
 package com.lu.richtexteditor;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.gson.GsonBuilder;
 import com.imnjh.imagepicker.SImagePicker;
@@ -17,6 +21,7 @@ import com.lu.base.depence.retrofit.uploader.beans.UploadProgress;
 import com.lu.base.depence.tools.SizeUtil;
 import com.lu.base.depence.tools.Utils;
 import com.lu.lubottommenu.LuBottomMenu;
+import com.lu.myview.customview.richeditor.RichEditor;
 import com.lu.richtexteditor.dialogs.DeleteDialog;
 import com.lu.richtexteditor.dialogs.LinkDialog;
 import com.lu.richtexteditorlib.SimpleRichEditor;
@@ -28,10 +33,10 @@ import java.util.HashMap;
 import okhttp3.ResponseBody;
 
 
-public class MainActivity extends AppCompatActivity implements SimpleRichEditor.OnEditorClickListener {
+public class MainActivity extends AppCompatActivity implements SimpleRichEditor.OnEditorClickListener, View.OnClickListener {
 
     private static final int REQUEST_CODE_IMAGE = 101;
-    private static final String UPLOAD_URL ="http://www.lhbzimo.cn:3000/";
+    private static final String UPLOAD_URL = "http://www.lhbzimo.cn:3000/";
     private static final String PAR_NAME = "images";
 
     private LuBottomMenu mLuBottomMenu;
@@ -39,15 +44,21 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
 
     //private ArrayList<String> selImageList; //当前选择的所有图片
 
-    private HashMap<Long,String> insertedImages;
-    private HashMap<Long,String> failedImages;
+    private HashMap<Long, String> mInsertedImages;
+    private HashMap<Long, String> mFailedImages;
+    private Toolbar mToolbar;
+    /**
+     * 发 表
+     */
+    private Button mButton;
 
+    @SuppressLint({"UseSparseArrays"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        insertedImages = new HashMap<>();
-        failedImages = new HashMap<>();
+        mInsertedImages = new HashMap<>();
+        mFailedImages = new HashMap<>();
         initView();
     }
 
@@ -63,10 +74,9 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
             for (String path :
                     pathList) {
                 id = SystemClock.currentThreadTimeMillis();
-                //Log.e("add id",id+"");
                 long size[] = SizeUtil.getBitmapSize(path);
                 mRichTextView.insertImage(path, id, size[0], size[1]);
-                insertedImages.put(id,path);
+                mInsertedImages.put(id, path);
                 tryUpload(path, id);
             }
 
@@ -76,24 +86,24 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
     }
 
     private void tryUpload(String path, final long id) {
-        RxUploader.INSTANCE.upload(UPLOAD_URL,PAR_NAME, path, id)
+        RxUploader.INSTANCE.upload(UPLOAD_URL, PAR_NAME, path, id)
                 .start()
                 .receiveEvent(new Uploader.OnUploadListener() {
                     @Override
                     public void onStart() {
-                        Log.e("start",id+"");
+                        Log.e("start", id + "");
                     }
 
                     @Override
                     public void onUploading(String filePath, UploadProgress progress) {
-                        Log.e("onUploading", id +": " + String.valueOf(progress.getProgress()));
+                        Log.e("onUploading", id + ": " + String.valueOf(progress.getProgress()));
                         mRichTextView.setImageUploadProcess(id, (int) progress.getProgress());
                     }
 
                     @Override
                     public void onCompleted(String filePath, ResponseBody responseBody) {
                         try {
-                            Response response = new GsonBuilder().create().fromJson(responseBody.string(),Response.class);
+                            Response response = new GsonBuilder().create().fromJson(responseBody.string(), Response.class);
                             Log.e("onCompleted", response.getData().get(0));
 
                         } catch (IOException e) {
@@ -106,8 +116,8 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
                     public void onFailed(String filePath, Throwable throwable) {
                         Log.e("onFailed", throwable.getMessage());
                         mRichTextView.setImageFailed(id);
-                        insertedImages.remove(id);
-                        failedImages.put(id,filePath);
+                        mInsertedImages.remove(id);
+                        mFailedImages.put(id, filePath);
                     }
                 });
     }
@@ -116,8 +126,24 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
         mLuBottomMenu = (LuBottomMenu) findViewById(R.id.lu_bottom_menu);
         mRichTextView = (SimpleRichEditor) findViewById(R.id.rich_text_view);
         mRichTextView.setOnEditorClickListener(this);
+        mRichTextView.setOnTextLengthChangeListener(new RichEditor.OnTextLengthChangeListener() {
+            @Override
+            public void onTextLengthChange(long length) {
+                mToolbar.setTitle(length+"字");
+            }
+        });
         mRichTextView.setLuBottomMenu(mLuBottomMenu);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mButton = (Button) findViewById(R.id.button);
+        mButton.setOnClickListener(this);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         initImagePicker();
+
     }
 
     private void initImagePicker() {
@@ -163,11 +189,11 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
         dialog.setListener(new DeleteDialog.OnDialogClickListener() {
             @Override
             public void onConfirmButtonClick(Long id) {
-                Log.e("onConfirmButtonClick",id.toString());
+                Log.e("onConfirmButtonClick", id.toString());
                 mRichTextView.deleteImageById(id);
                 removeFromLocalCache(id);
                 RxUploader.TaskController controller = RxUploader.INSTANCE.handle(id);
-                if(controller!=null) {
+                if (controller != null) {
                     controller.stopReceive();
                     controller.remove();
                 }
@@ -181,11 +207,11 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
         dialog.show(getSupportFragmentManager(), DeleteDialog.Tag);
     }
 
-    private void removeFromLocalCache(long id){
-        if(insertedImages.containsKey(id))
-            insertedImages.remove(id);
-        else if(failedImages.containsKey(id))
-            failedImages.remove(id);
+    private void removeFromLocalCache(long id) {
+        if (mInsertedImages.containsKey(id))
+            mInsertedImages.remove(id);
+        else if (mFailedImages.containsKey(id))
+            mFailedImages.remove(id);
     }
 
     @Override
@@ -205,14 +231,23 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
 
     @Override
     public void onImageClick(Long id) {
-        Log.e("onImageClick",id.toString());
-        if(insertedImages.containsKey(id))
+        Log.e("onImageClick", id.toString());
+        if (mInsertedImages.containsKey(id))
             showDeleteDialog(DeleteDialog.createDeleteDialog(id));
-        else if(failedImages.containsKey(id)){
+        else if (mFailedImages.containsKey(id)) {
             mRichTextView.setImageReload(id);
-            tryUpload(failedImages.get(id),id);
-            insertedImages.put(id,failedImages.get(id));
-            failedImages.remove(id);
+            tryUpload(mFailedImages.get(id), id);
+            mInsertedImages.put(id, mFailedImages.get(id));
+            mFailedImages.remove(id);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.button:
+
+                break;
         }
     }
 }

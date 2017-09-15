@@ -3,6 +3,7 @@ package com.lu.richtexteditor;
 import java.util.List;
 
 /**
+ * Response Body Gson 映射类
  * Created by 陆正威 on 2017/9/15.
  */
 

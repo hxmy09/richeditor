@@ -156,7 +156,7 @@ var RE = {
 			var name = evt.target.innerText;
 			var href = evt.target.getAttribute('href');
 			window.location.href = CHANGE_SCHEME + encodeURI(name + '@_@' + href);
-		} else if (evt.target && (evt.target.tagName === 'IMG' || evt.target.className === 'cover')) {
+		} else if (evt.target && (evt.target.tagName === 'IMG' || evt.target.className === 'cover' || evt.target.className === 'delete')) {
 			var parentNode = evt.target.parentNode;
 			var img = parentNode.querySelector('img');
 			var url = img.getAttribute('src');

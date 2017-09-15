@@ -23,7 +23,7 @@ public class SizeUtil {
 
     public static long[] getBitmapSize(String url){
         BitmapFactory.Options op=new BitmapFactory.Options();
-        op.inJustDecodeBounds=true;
+        op.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(url, op);
         return new long[]{op.outWidth,op.outHeight};
     }
