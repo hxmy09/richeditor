@@ -78,6 +78,7 @@ public abstract class RichEditor extends WebView {
     private static final String IMAGE_CLICK_SCHEME = "image://";
     private boolean isReady = false;
     private String mContents;
+    private long mContentLength;
     private OnTextChangeListener mTextChangeListener;
     private OnDecorationStateListener mDecorationStateListener;
     private AfterInitialLoadListener mLoadListener;
@@ -104,6 +105,7 @@ public abstract class RichEditor extends WebView {
         setHorizontalScrollBarEnabled(false);
         getSettings().setJavaScriptEnabled(true);
         setWebViewClient(createWebViewClient());
+        mContentLength = 0;
         loadUrl(SETUP_HTML);
 
         applyAttributes(context, attrs);
@@ -580,6 +582,10 @@ public abstract class RichEditor extends WebView {
 
     }
 
+    public long getContentLength() {
+        return mContentLength;
+    }
+
     public class Android4JsInterface {
         @JavascriptInterface
         public void setViewEnabled(boolean enabled){
@@ -593,8 +599,9 @@ public abstract class RichEditor extends WebView {
                 mTextChangeListener.onTextChange(htmlContent);
         }
 
-        public void setCurSize(long size){
-
+        @JavascriptInterface
+        public void staticWords(long num){
+            mContentLength = num;
         }
     }
 }
