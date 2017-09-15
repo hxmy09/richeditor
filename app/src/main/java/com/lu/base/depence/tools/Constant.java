@@ -5,8 +5,8 @@ package com.lu.base.depence.tools;
  */
 
 public class Constant {
-    public static int screenwithpx;
-    public static int screenheightpx;
-    public static int screenwithdp;
-    public static int screenheightdp;
+    public static int screenWithPx;
+    public static int screenHeightPx;
+    public static int screenWithDp;
+    public static int screenHeightDp;
 }

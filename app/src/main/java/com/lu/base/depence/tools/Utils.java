@@ -12,6 +12,8 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 
+import com.lu.base.depence.AppManager;
+
 import static android.os.Build.VERSION.SDK_INT;
 
 
@@ -67,7 +69,7 @@ public class Utils {
         Toast.makeText(AppManager.app(),text,Toast.LENGTH_LONG).show();
     }
 
-    static int[] getScreenSize() {
+    public static int[] getScreenSize() {
         WindowManager wm = (WindowManager) AppManager.app().getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics outMetrics = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(outMetrics);

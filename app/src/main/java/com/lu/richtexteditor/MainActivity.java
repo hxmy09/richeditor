@@ -119,10 +119,7 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
 
     private void initView() {
         mLuBottomMenu = (LuBottomMenu) findViewById(R.id.lu_bottom_menu);
-        //mLuBottomMenu.setOnItemClickListener(this);
-        //initBottomMenu(mLuBottomMenu);
         mRichTextView = (SimpleRichEditor) findViewById(R.id.rich_text_view);
-        //initRichTextViewListeners(mRichTextView);
         mRichTextView.setOnEditorClickListener(this);
         mRichTextView.setLuBottomMenu(mLuBottomMenu);
         initImagePicker();

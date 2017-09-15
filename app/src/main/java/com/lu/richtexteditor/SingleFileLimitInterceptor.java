@@ -12,12 +12,14 @@ import com.imnjh.imagepicker.PickerAction;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.facebook.common.util.ByteConstants.KB;
+
 /**
  * Created by 陆正威 on 2017/9/12.
  */
 public class SingleFileLimitInterceptor implements FileChooseInterceptor {
 
-    private static final long MAX_FILE_SIZE_ORIGINAL = 200 * 1024; // 200K
+    private static final long MAX_FILE_SIZE_ORIGINAL = 200 * KB; // 200K
 
     public SingleFileLimitInterceptor() {}
 

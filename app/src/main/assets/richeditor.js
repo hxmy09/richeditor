@@ -63,13 +63,13 @@ var RE = {
 		}, false);
 
 		_self.cache.editor.addEventListener('keyup', function (evt) {
-			if (e.which == 37 || e.which == 39 || e.which == 13 || e.which == 8) {
+			if (evt.which == 37 || evt.which == 39 || evt.which == 13 || evt.which == 8) {
 				_self.getEditItem(evt);
 			}
 		}, false);
 
 		_self.cache.editor.addEventListener('input', function () {
-			window.location.href = CALLBACK_SCHEME + encodeURI(_self.getHtml());
+			AndroidInterface.staticWords(_self.staticWords);
 		}, false);
 	},
 	initCache: function initCache() {
@@ -97,6 +97,10 @@ var RE = {
 	getHtml: function getHtml() {
 		var _self = this;
 		return _self.cache.editor.innerHTML;
+	},
+	staticWords: function staticWords() {
+		var _self = this;
+		return _self.cache.editor.innerHeight.replace(/<div\sclass="tips">.*<\/div>|<\/?[^>]*>/g, '').trim().length;
 	},
 	saveRange: function saveRange() {
 		//保存节点位置
@@ -165,6 +169,9 @@ var RE = {
 			var id = img.getAttribute('data-id');
 			window.location.href = IMAGE_SCHEME + encodeURI(id);
 		} else {
+			if (e.which == 8) {
+				AndroidInterface.staticWords();
+			}
 			var items = [];
 			_self.commandSet.forEach(function (item) {
 				if (document.queryCommandState(item)) {
@@ -208,7 +215,7 @@ var RE = {
 		range.setEnd(endContainer, len);
 		selection.addRange(range);
 	},
-	insertImage: function insertImage(url, id,width, height) {
+	insertImage: function insertImage(url, id, width, height) {
 		var _self = this;
 		var newWidth = 0,
 		    newHeight = 0;
@@ -239,7 +246,7 @@ var RE = {
 			var process = imgBlock.querySelector('.process');
 			imgBlock.removeChild(cover);
 			imgBlock.removeChild(process);
-//			_self.imageCache.delete(id);
+			_self.imageCache.delete(id);
 		}
 	},
 	removeImage: function removeImage(id) {
