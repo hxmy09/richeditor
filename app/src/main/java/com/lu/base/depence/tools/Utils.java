@@ -11,7 +11,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-
 import com.lu.base.depence.AppManager;
 
 import static android.os.Build.VERSION.SDK_INT;
