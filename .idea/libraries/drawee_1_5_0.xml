@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="drawee-1.5.0">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.android/build-cache/eccca798f66f59b51316b2b9a2bb538be8d1f263/output/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.android/build-cache/eccca798f66f59b51316b2b9a2bb538be8d1f263/output/res" />
+      <root url="file://$USER_HOME$/.android/build-cache/bf9a7203b14241615c1d40465bcd9bedc1b895ff/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/bf9a7203b14241615c1d40465bcd9bedc1b895ff/output/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

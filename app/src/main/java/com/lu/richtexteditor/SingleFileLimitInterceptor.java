@@ -42,7 +42,7 @@ public class SingleFileLimitInterceptor implements FileChooseInterceptor {
                 }
             }
             if (confirmedFiles.size() < selectedPic.size()) {
-                showSingleFileLimitDialog(context, original, resultCode, action, confirmedFiles);
+                showSingleFileLimitDialog(context, true, resultCode, action, confirmedFiles);
                 return false;
             }
         }
