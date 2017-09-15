@@ -159,7 +159,7 @@ var RE = {
 			var href = evt.target.getAttribute('href');
 			window.location.href = CHANGE_SCHEME + encodeURI(name + '@_@' + href);
 		} else {
-			if (e.which == 8) {
+			if (evt.which == 8) {
 				AndroidInterface.staticWords(_self.staticWords());
 			}
 			var items = [];
