@@ -6,6 +6,8 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/lubottommenu/lubottommenu.iml" filepath="$PROJECT_DIR$/lubottommenu/lubottommenu.iml" />
       <module fileurl="file://$PROJECT_DIR$/myview/myview.iml" filepath="$PROJECT_DIR$/myview/myview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/richedtor.iml" filepath="$PROJECT_DIR$/richedtor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/richedtor.iml" filepath="$PROJECT_DIR$/richedtor.iml" />
       <module fileurl="file://$PROJECT_DIR$/richtexteditorlib/richtexteditorlib.iml" filepath="$PROJECT_DIR$/richtexteditorlib/richtexteditorlib.iml" />
     </modules>
   </component>
