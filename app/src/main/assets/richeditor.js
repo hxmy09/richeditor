@@ -69,7 +69,7 @@ var RE = {
 		}, false);
 
 		_self.cache.editor.addEventListener('input', function () {
-			AndroidInterface.staticWords(_self.staticWords);
+			window.location.href = CALLBACK_SCHEME + encodeURI(_self.getHtml());
 		}, false);
 	},
 	initCache: function initCache() {
@@ -96,11 +96,7 @@ var RE = {
 	},
 	getHtml: function getHtml() {
 		var _self = this;
-		return _self.cache.editor.innerHTML;
-	},
-	staticWords: function staticWords() {
-		var _self = this;
-		return _self.cache.editor.innerHeight.replace(/<div\sclass="tips">.*<\/div>|<\/?[^>]*>/g, '').trim().length;
+		return _self.cache.editor.innerHTML.replace(/<div\sclass="tips">.*<\/div>|<\/?[^>]*>/g, '').trim().length;
 	},
 	saveRange: function saveRange() {
 		//保存节点位置
@@ -141,10 +137,8 @@ var RE = {
 		//执行指令
 		var _self = this;
 		if (_self.commandSet.indexOf(command) !== -1) {
-			console.log(111);
 			document.execCommand(command, false, null);
 		} else {
-			console.log(1111);
 			var value = '<' + command + '>';
 			document.execCommand('formatBlock', false, value);
 		}
@@ -169,9 +163,6 @@ var RE = {
 			var id = img.getAttribute('data-id');
 			window.location.href = IMAGE_SCHEME + encodeURI(id);
 		} else {
-			if (evt.which == 8) {
-				AndroidInterface.staticWords();
-			}
 			var items = [];
 			_self.commandSet.forEach(function (item) {
 				if (document.queryCommandState(item)) {
@@ -190,6 +181,7 @@ var RE = {
 	},
 	insertLine: function insertLine() {
 		var _self = this;
+		_self.getEditItem({});
 		var html = '<hr><div><br></div>';
 		_self.insertHtml(html);
 	},
@@ -223,12 +215,12 @@ var RE = {
 		    screenWidth = _self$setting.screenWidth,
 		    screenDpr = _self$setting.screenDpr;
 
-		if (width > screenWidth * screenDpr) {
+		if (width > screenWidth) {
 			newWidth = screenWidth;
 			newHeight = height * newWidth / width;
 		} else {
-			newWidth = width / screenDpr;
-			newHeight = height / screenDpr;
+			newWidth = width;
+			newHeight = height;
 		}
 		var image = '<div><br></div><div class="img-block">\n\t\t\t\t<div style="width: ' + newWidth + 'px" class="process">\n\t\t\t\t\t<div class="fill">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<img class="images" data-id="' + id + '" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px;" src="' + url + '"/>\n\t\t\t\t<div class="cover" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px"></div>\n\t\t\t\t<div class="delete">\n\t\t\t\t\t<img src="./reload.png">\n\t\t\t\t\t<div class="tips">\u56FE\u7247\u4E0A\u4F20\u5931\u8D25\uFF0C\u8BF7\u70B9\u51FB\u91CD\u8BD5</div>\n\t\t\t\t</div>\n\t\t\t\t<input type="text" placeholder="\u8BF7\u8F93\u5165\u56FE\u7247\u540D\u5B57">\n\t\t\t</div><div><br></div>';
 		_self.insertHtml(image);
@@ -246,7 +238,6 @@ var RE = {
 			var process = imgBlock.querySelector('.process');
 			imgBlock.removeChild(cover);
 			imgBlock.removeChild(process);
-			_self.imageCache.delete(id);
 		}
 	},
 	removeImage: function removeImage(id) {
