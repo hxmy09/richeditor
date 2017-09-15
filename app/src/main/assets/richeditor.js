@@ -23,7 +23,6 @@ var RE = {
 	},
 	setting: {
 		screenWidth: 0,
-		screenDpr: 0,
 		margin: 20
 	},
 	imageCache: new Map(),
@@ -69,7 +68,7 @@ var RE = {
 		}, false);
 
 		_self.cache.editor.addEventListener('input', function () {
-			window.location.href = CALLBACK_SCHEME + encodeURI(_self.getHtml());
+			AndroidInterface.staticWords(_self.staticWords());
 		}, false);
 	},
 	initCache: function initCache() {
@@ -81,7 +80,6 @@ var RE = {
 	initSetting: function initSetting() {
 		var _self = this;
 		_self.setting.screenWidth = window.innerWidth - 20;
-		_self.setting.screenDpr = window.devicePixelRatio;
 	},
 	focus: function focus() {
 		//聚焦
@@ -95,6 +93,10 @@ var RE = {
 		_self.cache.editor.focus();
 	},
 	getHtml: function getHtml() {
+		var _self = this;
+		return _self.cache.editor.innerHTML;
+	},
+	staticWords: function staticWords() {
 		var _self = this;
 		return _self.cache.editor.innerHTML.replace(/<div\sclass="tips">.*<\/div>|<\/?[^>]*>/g, '').trim().length;
 	},
@@ -110,10 +112,10 @@ var RE = {
 			    endOffset = range.endOffset;
 
 			_self.currentRange = {
-				startContainer: range.startContainer,
-				startOffset: range.startOffset,
-				endContainer: range.endContainer,
-				endOffset: range.endOffset
+				startContainer: startContainer,
+				startOffset: startOffset,
+				endContainer: endContainer,
+				endOffset: endOffset
 			};
 		}
 	},
@@ -156,13 +158,10 @@ var RE = {
 			var name = evt.target.innerText;
 			var href = evt.target.getAttribute('href');
 			window.location.href = CHANGE_SCHEME + encodeURI(name + '@_@' + href);
-		} else if (evt.target && (evt.target.tagName === 'IMG' || evt.target.className === 'cover' || evt.target.className === 'delete')) {
-			var parentNode = evt.target.parentNode;
-			var img = parentNode.querySelector('img');
-			var url = img.getAttribute('src');
-			var id = img.getAttribute('data-id');
-			window.location.href = IMAGE_SCHEME + encodeURI(id);
 		} else {
+			if (e.which == 8) {
+				AndroidInterface.staticWords(_self.staticWords());
+			}
 			var items = [];
 			_self.commandSet.forEach(function (item) {
 				if (document.queryCommandState(item)) {
@@ -181,7 +180,6 @@ var RE = {
 	},
 	insertLine: function insertLine() {
 		var _self = this;
-		_self.getEditItem({});
 		var html = '<hr><div><br></div>';
 		_self.insertHtml(html);
 	},
@@ -211,9 +209,7 @@ var RE = {
 		var _self = this;
 		var newWidth = 0,
 		    newHeight = 0;
-		var _self$setting = _self.setting,
-		    screenWidth = _self$setting.screenWidth,
-		    screenDpr = _self$setting.screenDpr;
+		var screenWidth = _self.setting.screenWidth;
 
 		if (width > screenWidth) {
 			newWidth = screenWidth;
@@ -224,9 +220,17 @@ var RE = {
 		}
 		var image = '<div><br></div><div class="img-block">\n\t\t\t\t<div style="width: ' + newWidth + 'px" class="process">\n\t\t\t\t\t<div class="fill">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<img class="images" data-id="' + id + '" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px;" src="' + url + '"/>\n\t\t\t\t<div class="cover" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px"></div>\n\t\t\t\t<div class="delete">\n\t\t\t\t\t<img src="./reload.png">\n\t\t\t\t\t<div class="tips">\u56FE\u7247\u4E0A\u4F20\u5931\u8D25\uFF0C\u8BF7\u70B9\u51FB\u91CD\u8BD5</div>\n\t\t\t\t</div>\n\t\t\t\t<input type="text" placeholder="\u8BF7\u8F93\u5165\u56FE\u7247\u540D\u5B57">\n\t\t\t</div><div><br></div>';
 		_self.insertHtml(image);
-		var img = document.querySelector('img[src="' + url + '"]');
-		img.parentNode.contentEditable = false;
-		_self.imageCache.set(id, img.parentNode);
+		var img = document.querySelector('img[data-id="' + id + '"]');
+		var imgBlock = img.parentNode;
+		imgBlock.contentEditable = false;
+		imgBlock.addEventListener('click', function (e) {
+			e.stopPropagation();
+			var current = e.currentTarget;
+			var img = current.querySelector('.images');
+			var id = img.getAttribute('data-id');
+			window.location.href = _self.schemeCache.IMAGE_SCHEME + encodeURI(id);
+		}, false);
+		_self.imageCache.set(id, imgBlock);
 	},
 	changeProcess: function changeProcess(id, process) {
 		var _self = this;
@@ -244,6 +248,7 @@ var RE = {
 		var _self = this;
 		var imgBlock = _self.imageCache.get(id);
 		imgBlock.parentNode.removeChild(imgBlock);
+		_self.imageCache.delete(id);
 	},
 	uploadFailure: function uploadFailure(id) {
 		var _self = this;
