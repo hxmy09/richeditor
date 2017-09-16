@@ -83,26 +83,18 @@ public class LuBottomMenu extends ViewGroup {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        if(needLine) {
+        if (needLine) {
             mPaint = new Paint();
             mPaint.setAlpha(127);
         }
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (isInEditMode()) {
-            addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x01, R.drawable.cloud));
-            addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x02, R.drawable.cloud));
-            addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x03, R.drawable.cloud));
-            addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x04, R.drawable.cloud));
-            addOneLevel();
-        }
-        if (mPathRecord.isEmpty())
-            addOneLevel();
-    }
-
+    /**
+     * @param widthMeasureSpec 宽度测量信息
+     * @param heightMeasureSpec 高度测量信息
+     *
+     * 为了适配wrap_content 会进行2次测量，第一次检测mode 第二次正真排布
+     */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -110,42 +102,44 @@ public class LuBottomMenu extends ViewGroup {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        if (isFirstMeasure) {
-            removeUnUselessViews();
-            isFirstMeasure = false;
-        }
 
         int width = Math.max(widthSize, 0);
 
+        //注意这里没有break
         switch (heightMode) {
-            //若允许任意大小，则设置最大层数为5层
+            //若允许任意大小，则设置最大层数为5层并继续接下来的设置
             case MeasureSpec.UNSPECIFIED:
                 MAX_LEVELS = 5;
-                break;
             //若为WRAP_CONTENT时设置默认高度54dp
             case MeasureSpec.AT_MOST:
-                Log.e("mode", "AT_MOST");
-                mSingleRowHeight = Utils.dip2px(getContext(),DEFAULT_HEIGHT);
-                break;
-            //大部分情况下为精确计算宽高
+                heightSize = Utils.dip2px(getContext(), DEFAULT_HEIGHT);
+                heightMeasureSpec = MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY);
+                //大部分情况下为精确计算宽高
             case MeasureSpec.EXACTLY:
-                Log.e("mode", "EXACTLY:"+ heightSize);
                 mSingleRowHeight = Math.max(heightSize - getPaddingBottom() - getPaddingTop(), 0);
                 break;
         }
 
+        final int height;
         //逻辑树中至少除了root节点外含有一行
-        if (mDisplayRowNum < 1)
-            throw new RuntimeException("nothing can been displayed ,please init at least one level of the menu-tree");
-
-        int height = mDisplayRowNum * mSingleRowHeight + getPaddingTop() + getPaddingBottom();
-
+        if (mDisplayRowNum < 1) {
+            height = mSingleRowHeight + getPaddingTop() + getPaddingBottom();
+        } else {
+            height = mDisplayRowNum * mSingleRowHeight + getPaddingTop() + getPaddingBottom();
+        }
         setMeasuredDimension(width, height);
+
+        //如果是第一次测测量移除无用的view ，不对子view进行测量
+        if (isFirstMeasure) {
+            removeUnUselessViews();
+            isFirstMeasure = false;
+            return;
+        }
 
         final int childCount = getChildCount();
 
         View child;
-        for(int i = 0;i<childCount;i++){
+        for (int i = 0; i < childCount; i++) {
             child = getChildAt(i);
             measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
         }
@@ -153,6 +147,17 @@ public class LuBottomMenu extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+
+        //第一次layout根据第一次measure的高度进行添加不进行子view的layout
+        if (isFirstLayout) {
+            isFirstLayout = false;
+            if (mPathRecord.isEmpty()) {
+                //初始化底栏的根目录级
+                addOneLevel();
+            }
+            return;
+        }
+
         final int childCount = getChildCount();
         final int topBase = getPaddingTop();
         final int leftBase = getPaddingLeft();
@@ -168,18 +173,14 @@ public class LuBottomMenu extends ViewGroup {
                         width - getPaddingRight() - child.getPaddingRight(), topBase + (offset + 1) * mSingleRowHeight - child.getPaddingBottom());
             }
         }
+
     }
 
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
         boolean success = super.drawChild(canvas, child, drawingTime);
-        if(needLine) drawLine(canvas);
+        if (needLine) drawLine(canvas);
         return success;
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
     }
 
     @Override
@@ -189,7 +190,6 @@ public class LuBottomMenu extends ViewGroup {
             super.onRestoreInstanceState(ss.getSuperState());
             mMenuTree = ss.menuItemTree;//恢复逻辑树
             mBottomMenuItems = ss.bottomMenuItems;
-            //mPathRecord = ss.pathRecord;
             restoreAllInfo(ss.pathRecord);//根据路径信息恢复其他信息
         }
     }
@@ -214,12 +214,15 @@ public class LuBottomMenu extends ViewGroup {
         }
     }
 
-    //After init()
+    /**
+     * 在 init()之后调用
+     */
     private void removeUnUselessViews() {
         final int childCount = getChildCount();
         if (childCount > mDisplayMenus.size()) {
             for (int i = 0; i < childCount; i++) {
                 View v = getChildAt(i);
+                //noinspection SuspiciousMethodCalls
                 if (!mDisplayMenus.contains(v))
                     removeView(v);
             }
@@ -248,6 +251,11 @@ public class LuBottomMenu extends ViewGroup {
         mCurMenuItem = mMenuTree.getRootItem();
     }
 
+
+    /**
+     * @param menuItem
+     * bottomitem 点击后的预处理事件
+     */
     private void onItemClickPreHandle(MenuItem menuItem) {
         if (!menuItem.equals(mCurMenuItem)) {
             if (!menuItem.isLeafNode()) {
@@ -283,7 +291,8 @@ public class LuBottomMenu extends ViewGroup {
      * 增加一行菜单当未超过最大限制并且不是逻辑树中的叶子节点时
      */
     private void addOneLevel() {
-        if (mCurMenuItem == null || mCurMenuItem.isLeafNode()|| mCurMenuItem.getDeep()>= MAX_LEVELS - 1)
+        Log.e("addOneLevel", mSingleRowHeight + "");
+        if (mCurMenuItem == null || mCurMenuItem.isLeafNode() || mCurMenuItem.getDeep() >= MAX_LEVELS - 1)
             return;
         LinearLayout linearLayout = new LinearLayout(getContext());
 
@@ -302,6 +311,10 @@ public class LuBottomMenu extends ViewGroup {
         mDisplayRowNum++;
     }
 
+
+    /**
+     * unused
+     */
     private void removeTopLevel() {
         removeAllLevels(1);
     }
@@ -329,7 +342,7 @@ public class LuBottomMenu extends ViewGroup {
 
     /**
      * @param parent 聚焦节点
-     *               填充顶部的菜单行
+     *  填充顶部的菜单行
      */
     private void fillTopMenu(MenuItem parent) {
         if (mDisplayRowNum >= 1)
@@ -337,9 +350,9 @@ public class LuBottomMenu extends ViewGroup {
     }
 
     /**
-     * @param menu 需要填充的布局
-     * @param parent  聚焦节点
-     *                填充对应布局
+     * @param menu   需要填充的布局
+     * @param parent 聚焦节点
+     * 填充对应布局根据聚焦的节点的子节点
      */
     private void fillMenu(LinearLayout menu, MenuItem parent) {
 
@@ -366,11 +379,11 @@ public class LuBottomMenu extends ViewGroup {
 
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
                 v.setLayoutParams(lp);
-                if(mSingleRowHeight == 0){
+                if (mSingleRowHeight == 0) {
                     mSingleRowHeight = getLayoutParams().height;
                 }
-                int padding = (int) (mSingleRowHeight*(1-INNER_ITEM_PADDING_RATE)/2);
-                v.setPadding(padding/3,padding,padding/3,padding);
+                int padding = (int) (mSingleRowHeight * (1 - INNER_ITEM_PADDING_RATE) / 2);
+                v.setPadding(padding / 3, padding, padding / 3, padding);
                 linearLayout.addView(v);
             }
             scrollView.addView(linearLayout, new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
@@ -385,11 +398,11 @@ public class LuBottomMenu extends ViewGroup {
                 bottomMenuItem.onDisplayPrepare();
 
                 v = bottomMenuItem.getMainView();
-                if(mSingleRowHeight == 0){
+                if (mSingleRowHeight == 0) {
                     mSingleRowHeight = getLayoutParams().height;
                 }
-                int padding = (int) (mSingleRowHeight*(1-INNER_ITEM_PADDING_RATE)/2);
-                v.setPadding(padding/3,padding,padding/3,padding);
+                int padding = (int) (mSingleRowHeight * (1 - INNER_ITEM_PADDING_RATE) / 2);
+                v.setPadding(padding / 3, padding, padding / 3, padding);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT);
                 lp.weight = 1;
                 v.setLayoutParams(lp);
@@ -442,7 +455,10 @@ public class LuBottomMenu extends ViewGroup {
         return mBottomMenuItems.get(item.getId());
     }
 
-    //通过路径直接恢复视图序列
+    /**
+     * @param pathRecord 点击的展开路径记录
+     * 通过路径直接恢复视图序列
+     */
     private void restoreAllInfo(ArrayDeque<MenuItem> pathRecord) {
         while (!pathRecord.isEmpty()) {
             mCurMenuItem = pathRecord.getLast();
@@ -451,19 +467,27 @@ public class LuBottomMenu extends ViewGroup {
         }
     }
 
+
+    /**
+     * @param deep 当前聚焦项的深度
+     * @return  在颜色列表中对应的颜色
+     */
     private int getColorByDeep(int deep) {
         return COLOR_SET[deep % COLOR_SET.length];
     }
 
-    private void drawLine(Canvas canvas){
-        mPaint.setColor(Utils.getDarkerColor(getColorByDeep(mDisplayRowNum),0.1f));
+    /**
+     * @param canvas
+     * 根据背景色绘制Menu顶部的分割线
+     */
+    private void drawLine(Canvas canvas) {
+        mPaint.setColor(Utils.getDarkerColor(getColorByDeep(mDisplayRowNum), 0.1f));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            canvas.drawLine(getPaddingStart(),getPaddingTop(),getWidth() - getPaddingEnd(),getPaddingTop(),mPaint);
-        }else {
-            canvas.drawLine(getPaddingLeft(),getPaddingTop(),getWidth() - getPaddingRight(),getPaddingTop(),mPaint);
+            canvas.drawLine(getPaddingStart(), getPaddingTop(), getWidth() - getPaddingEnd(), getPaddingTop(), mPaint);
+        } else {
+            canvas.drawLine(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getPaddingTop(), mPaint);
         }
     }
-
 
     @Override
     protected LayoutParams generateLayoutParams(LayoutParams p) {
@@ -513,6 +537,14 @@ public class LuBottomMenu extends ViewGroup {
 
     //=========================================== 外部调用 =========================================================================================
 
+    public void setInnerLayoutPadding(int l,int t,int r,int b){
+        INNER_LAYOUT_PADDING_L = l;
+        INNER_LAYOUT_PADDING_R = r;
+        INNER_LAYOUT_PADDING_T = t;
+        INNER_LAYOUT_PADDING_B = b;
+        invalidate();
+    }
+
     public void setOnItemClickListener(IBottomMenuItem.OnItemClickListener mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
     }
@@ -524,24 +556,24 @@ public class LuBottomMenu extends ViewGroup {
     }
 
     //can't work now
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         Set<Map.Entry<Long, BottomMenuItem>> entrySet = mBottomMenuItems.entrySet();
         for (Map.Entry<Long, BottomMenuItem> e :
                 entrySet) {
             //Log.e("setEnabled",enabled+""+e.getValue().getItemId());
-            if(e.getValue().getMainView()!=null)
+            if (e.getValue().getMainView() != null)
                 e.getValue().getMainView().setEnabled(enabled);
         }
         super.setEnabled(enabled);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void show(long d){
-        AnimatorUtil.show(this,d);
+    public void show(long d) {
+        AnimatorUtil.show(this, d);
     }
 
-    public void hide(long d){
-        AnimatorUtil.hide(this,d);
+    public void hide(long d) {
+        AnimatorUtil.hide(this, d);
     }
 
     public int isItemSelected2(MenuItem item) {
@@ -555,7 +587,7 @@ public class LuBottomMenu extends ViewGroup {
     public int isItemSelected2(long id) {
         BottomMenuItem bottomMenuItem = getBottomMenuItem(mMenuTree.getRootItem().getMenuItemById(id));
         if (bottomMenuItem != null)
-            return bottomMenuItem.isSelected() ? 1:0;
+            return bottomMenuItem.isSelected() ? 1 : 0;
         else
             return -1;
     }
@@ -595,7 +627,7 @@ public class LuBottomMenu extends ViewGroup {
     }
 
     public LuBottomMenu addRootItem(BottomMenuItem bottomMenuItem) {
-        if(bottomMenuItem == null) return this;
+        if (bottomMenuItem == null) return this;
         MenuItem menuItem = bottomMenuItem.getMenuItem();
         mBottomMenuItems.put(menuItem.getId(), bottomMenuItem);
 
@@ -604,7 +636,7 @@ public class LuBottomMenu extends ViewGroup {
     }
 
     public LuBottomMenu addItem(MenuItem parentItem, BottomMenuItem bottomMenuItem) {
-        if(bottomMenuItem == null) return this;
+        if (bottomMenuItem == null) return this;
         MenuItem menuItem = bottomMenuItem.getMenuItem();
         if (parentItem == mMenuTree.getRootItem())
             addRootItem(bottomMenuItem);
@@ -616,7 +648,7 @@ public class LuBottomMenu extends ViewGroup {
     }
 
     public LuBottomMenu addItem(long parentId, BottomMenuItem bottomMenuItem) {
-        if(bottomMenuItem == null) return this;
+        if (bottomMenuItem == null) return this;
         MenuItem menuItem = bottomMenuItem.getMenuItem();
 
         mBottomMenuItems.put(menuItem.getId(), bottomMenuItem);

@@ -22,7 +22,7 @@ import com.lu.base.depence.tools.SizeUtil;
 import com.lu.base.depence.tools.Utils;
 import com.lu.lubottommenu.LuBottomMenu;
 import com.lu.myview.customview.richeditor.RichEditor;
-import com.lu.richtexteditor.dialogs.DeleteDialog;
+import com.lu.richtexteditor.dialogs.PictureHandleDialog;
 import com.lu.richtexteditor.dialogs.LinkDialog;
 import com.lu.richtexteditorlib.SimpleRichEditor;
 
@@ -41,8 +41,6 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
 
     private LuBottomMenu mLuBottomMenu;
     private SimpleRichEditor mRichTextView;
-
-    //private ArrayList<String> selImageList; //当前选择的所有图片
 
     private HashMap<Long, String> mInsertedImages;
     private HashMap<Long, String> mFailedImages;
@@ -70,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
                     data.getStringArrayListExtra(PhotoPickerActivity.EXTRA_RESULT_SELECTION);
 
             long id;
-            // TODO: 2017/9/14 在线程中添加
+            // TODO: 2017/9/14 准备在线程中添加这段代码防止主线程卡顿
             for (String path :
                     pathList) {
                 id = SystemClock.currentThreadTimeMillis();
@@ -79,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
                 mInsertedImages.put(id, path);
                 tryUpload(path, id);
             }
-
+            //是否是原图
             final boolean original =
                     data.getBooleanExtra(PhotoPickerActivity.EXTRA_RESULT_ORIGINAL, false);
         }
@@ -91,12 +89,11 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
                 .receiveEvent(new Uploader.OnUploadListener() {
                     @Override
                     public void onStart() {
-                        Log.e("start", id + "");
+                        //do something when start upload
                     }
 
                     @Override
                     public void onUploading(String filePath, UploadProgress progress) {
-                        Log.e("onUploading", id + ": " + String.valueOf(progress.getProgress()));
                         mRichTextView.setImageUploadProcess(id, (int) progress.getProgress());
                     }
 
@@ -104,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
                     public void onCompleted(String filePath, ResponseBody responseBody) {
                         try {
                             Response response = new GsonBuilder().create().fromJson(responseBody.string(), Response.class);
-                            Log.e("onCompleted", response.getData().get(0));
+                            //Log.e("onCompleted", response.getData().get(0));
 
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -114,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
 
                     @Override
                     public void onFailed(String filePath, Throwable throwable) {
-                        Log.e("onFailed", throwable.getMessage());
                         mRichTextView.setImageFailed(id);
                         mInsertedImages.remove(id);
                         mFailedImages.put(id, filePath);
@@ -132,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
                 mToolbar.post(new Runnable() {
                     @Override
                     public void run() {
-                        mToolbar.setTitle(length+"字");
+                        mToolbar.setTitle(length+getString(R.string.char_unit));
                     }
                 });
             }
@@ -190,11 +186,11 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
         dialog.show(getSupportFragmentManager(), LinkDialog.Tag);
     }
 
-    private void showDeleteDialog(final DeleteDialog dialog) {
-        dialog.setListener(new DeleteDialog.OnDialogClickListener() {
+    private void showPictureClickDialog(final PictureHandleDialog dialog,CharSequence[] items) {
+        dialog.setListener(new PictureHandleDialog.OnDialogClickListener() {
             @Override
-            public void onConfirmButtonClick(Long id) {
-                Log.e("onConfirmButtonClick", id.toString());
+            public void onDeleteButtonClick(Long id) {
+                Log.e("onDeleteButtonClick", id.toString());
                 mRichTextView.deleteImageById(id);
                 removeFromLocalCache(id);
                 RxUploader.TaskController controller = RxUploader.INSTANCE.handle(id);
@@ -205,11 +201,16 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
             }
 
             @Override
-            public void onCancelButtonClick() {
+            public void onReloadButtonClick(Long id) {
                 //dialog.dismiss();
+                mRichTextView.setImageReload(id);
+                tryUpload(mFailedImages.get(id), id);
+                mInsertedImages.put(id, mFailedImages.get(id));
+                mFailedImages.remove(id);
             }
         });
-        dialog.show(getSupportFragmentManager(), DeleteDialog.Tag);
+        dialog.setItems(items);
+        dialog.show(getSupportFragmentManager(), PictureHandleDialog.Tag);
     }
 
     private void removeFromLocalCache(long id) {
@@ -236,14 +237,10 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
 
     @Override
     public void onImageClick(Long id) {
-        Log.e("onImageClick", id.toString());
         if (mInsertedImages.containsKey(id))
-            showDeleteDialog(DeleteDialog.createDeleteDialog(id));
+            showPictureClickDialog(PictureHandleDialog.createDeleteDialog(id),new CharSequence[]{getString(R.string.delete)});
         else if (mFailedImages.containsKey(id)) {
-            mRichTextView.setImageReload(id);
-            tryUpload(mFailedImages.get(id), id);
-            mInsertedImages.put(id, mFailedImages.get(id));
-            mFailedImages.remove(id);
+            showPictureClickDialog(PictureHandleDialog.createDeleteDialog(id),new CharSequence[]{getString(R.string.delete),getString(R.string.retry)});
         }
     }
 
@@ -251,7 +248,9 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button:
-
+                //发表按钮
+                //do something
+                //such as gethtml
                 break;
         }
     }
