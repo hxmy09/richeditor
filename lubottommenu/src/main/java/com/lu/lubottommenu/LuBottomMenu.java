@@ -1,7 +1,10 @@
 package com.lu.lubottommenu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -34,16 +37,16 @@ import java.util.Set;
 @SuppressWarnings({"unchecked", "unused", "WeakerAccess"})
 public class LuBottomMenu extends ViewGroup {
 
-    private int MAX_NUM_ONE_ROW = 6;
-    private int MAX_LEVELS = 3;
+    private final static int DEFAULT_HEIGHT = 54;//dp
+
+    private static int MAX_NUM_ONE_ROW = 6;
+    private static int MAX_LEVELS = 3;
     private static int INNER_LAYOUT_PADDING_L = 0;
     private static int INNER_LAYOUT_PADDING_R = 0;
     private static int INNER_LAYOUT_PADDING_T = 0;
     private static int INNER_LAYOUT_PADDING_B = 0;
-    private static float INNER_ITEM_PADDING_RATE = 0.44f;
+    private static float INNER_ITEM_PADDING_RATE = 0.44f;//内部图标内边距充填0.56
     private static int[] COLOR_SET = {Color.WHITE, Color.argb(255, 252, 252, 252)};
-
-    private boolean colorSelector = true;
 
     private MenuItemTree mMenuTree;
     private HashMap<Long, BottomMenuItem> mBottomMenuItems;
@@ -54,8 +57,11 @@ public class LuBottomMenu extends ViewGroup {
     private int mDisplayRowNum = 0;//显示的菜单行数
     private int mSingleRowHeight = 0;//每级菜单的高度
 
+    private Paint mPaint;
+
     private boolean isFirstMeasure = true;
     private boolean isFirstLayout = true;
+    private boolean needLine = true;
 
     private IBottomMenuItem.OnItemClickListener mOnItemClickListener;
 
@@ -77,7 +83,10 @@ public class LuBottomMenu extends ViewGroup {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-
+        if(needLine) {
+            mPaint = new Paint();
+            mPaint.setAlpha(127);
+        }
     }
 
     @Override
@@ -88,10 +97,6 @@ public class LuBottomMenu extends ViewGroup {
             addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x02, R.drawable.cloud));
             addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x03, R.drawable.cloud));
             addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x04, R.drawable.cloud));
-
-            addItem(0x01, MenuItemFactory.generateImageItem(getContext(), 0x05, R.drawable.cloud));
-            addItem(0x02, MenuItemFactory.generateImageItem(getContext(), 0x06, R.drawable.cloud));
-            addItem(0x05, MenuItemFactory.generateImageItem(getContext(), 0x07, R.drawable.cloud));
             addOneLevel();
         }
         if (mPathRecord.isEmpty())
@@ -113,19 +118,23 @@ public class LuBottomMenu extends ViewGroup {
         int width = Math.max(widthSize, 0);
 
         switch (heightMode) {
+            //若允许任意大小，则设置最大层数为5层
             case MeasureSpec.UNSPECIFIED:
                 MAX_LEVELS = 5;
                 break;
+            //若为WRAP_CONTENT时设置默认高度54dp
             case MeasureSpec.AT_MOST:
-                //Log.e("mode", "AT_MOST");
+                Log.e("mode", "AT_MOST");
+                mSingleRowHeight = Utils.dip2px(getContext(),DEFAULT_HEIGHT);
                 break;
+            //大部分情况下为精确计算宽高
             case MeasureSpec.EXACTLY:
                 Log.e("mode", "EXACTLY:"+ heightSize);
                 mSingleRowHeight = Math.max(heightSize - getPaddingBottom() - getPaddingTop(), 0);
-
                 break;
         }
 
+        //逻辑树中至少除了root节点外含有一行
         if (mDisplayRowNum < 1)
             throw new RuntimeException("nothing can been displayed ,please init at least one level of the menu-tree");
 
@@ -134,6 +143,7 @@ public class LuBottomMenu extends ViewGroup {
         setMeasuredDimension(width, height);
 
         final int childCount = getChildCount();
+
         View child;
         for(int i = 0;i<childCount;i++){
             child = getChildAt(i);
@@ -158,6 +168,18 @@ public class LuBottomMenu extends ViewGroup {
                         width - getPaddingRight() - child.getPaddingRight(), topBase + (offset + 1) * mSingleRowHeight - child.getPaddingBottom());
             }
         }
+    }
+
+    @Override
+    protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+        boolean success = super.drawChild(canvas, child, drawingTime);
+        if(needLine) drawLine(canvas);
+        return success;
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
     }
 
     @Override
@@ -204,6 +226,7 @@ public class LuBottomMenu extends ViewGroup {
         }
     }
 
+    @SuppressLint("UseSparseArrays")
     private void init() {
         mMenuTree = new MenuItemTree();
         mDisplayMenus = new ArrayList<>();
@@ -256,6 +279,9 @@ public class LuBottomMenu extends ViewGroup {
         }
     }
 
+    /**
+     * 增加一行菜单当未超过最大限制并且不是逻辑树中的叶子节点时
+     */
     private void addOneLevel() {
         if (mCurMenuItem == null || mCurMenuItem.isLeafNode()|| mCurMenuItem.getDeep()>= MAX_LEVELS - 1)
             return;
@@ -263,7 +289,8 @@ public class LuBottomMenu extends ViewGroup {
 
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
         linearLayout.setBackgroundColor(getColorByDeep(mCurMenuItem.getDeep()));
-        linearLayout.setPadding(INNER_LAYOUT_PADDING_L, INNER_LAYOUT_PADDING_T, INNER_LAYOUT_PADDING_R, INNER_LAYOUT_PADDING_B);
+        linearLayout.setPadding(INNER_LAYOUT_PADDING_L, INNER_LAYOUT_PADDING_T,
+                INNER_LAYOUT_PADDING_R, INNER_LAYOUT_PADDING_B);
         linearLayout.setLayoutParams(new ViewGroup.MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
         mDisplayMenus.add(linearLayout);
@@ -299,6 +326,11 @@ public class LuBottomMenu extends ViewGroup {
         }
     }
 
+
+    /**
+     * @param parent 聚焦节点
+     *               填充顶部的菜单行
+     */
     private void fillTopMenu(MenuItem parent) {
         if (mDisplayRowNum >= 1)
             fillMenu(mDisplayMenus.get(mDisplayRowNum - 1), parent);
@@ -313,6 +345,8 @@ public class LuBottomMenu extends ViewGroup {
 
         if (parent.getNextLevel() == null) return;
         final int count = parent.getNextLevel().size();
+        View v;
+
         if (count > MAX_NUM_ONE_ROW) {
             HorizontalScrollView scrollView = new HorizontalScrollView(getContext());
             scrollView.setSmoothScrollingEnabled(true);
@@ -328,7 +362,7 @@ public class LuBottomMenu extends ViewGroup {
                     bottomMenuItem.setContext(getContext());
                 bottomMenuItem.onDisplayPrepare();
 
-                View v = bottomMenuItem.getMainView();
+                v = bottomMenuItem.getMainView();
 
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
                 v.setLayoutParams(lp);
@@ -350,7 +384,7 @@ public class LuBottomMenu extends ViewGroup {
                     bottomMenuItem.setContext(getContext());
                 bottomMenuItem.onDisplayPrepare();
 
-                View v = bottomMenuItem.getMainView();
+                v = bottomMenuItem.getMainView();
                 if(mSingleRowHeight == 0){
                     mSingleRowHeight = getLayoutParams().height;
                 }
@@ -420,6 +454,16 @@ public class LuBottomMenu extends ViewGroup {
     private int getColorByDeep(int deep) {
         return COLOR_SET[deep % COLOR_SET.length];
     }
+
+    private void drawLine(Canvas canvas){
+        mPaint.setColor(Utils.getDarkerColor(getColorByDeep(mDisplayRowNum),0.1f));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            canvas.drawLine(getPaddingStart(),getPaddingTop(),getWidth() - getPaddingEnd(),getPaddingTop(),mPaint);
+        }else {
+            canvas.drawLine(getPaddingLeft(),getPaddingTop(),getWidth() - getPaddingRight(),getPaddingTop(),mPaint);
+        }
+    }
+
 
     @Override
     protected LayoutParams generateLayoutParams(LayoutParams p) {
@@ -532,7 +576,7 @@ public class LuBottomMenu extends ViewGroup {
             throw new RuntimeException("no item match");
     }
 
-    public void setScrollNum(int num) {
+    public void setScrollModeNum(int num) {
         MAX_NUM_ONE_ROW = num;
     }
 

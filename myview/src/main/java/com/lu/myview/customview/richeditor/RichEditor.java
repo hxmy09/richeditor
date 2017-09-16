@@ -106,20 +106,23 @@ public abstract class RichEditor extends WebView {
     @SuppressLint({"SetJavaScriptEnabled","addJavascriptInterface"})
     public RichEditor(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
+        if(isInEditMode())
+            return;
+        
         addJavascriptInterface(new Android4JsInterface(),"AndroidInterface");
         setVerticalScrollBarEnabled(false);
         setHorizontalScrollBarEnabled(false);
-        getSettings().setJavaScriptEnabled(true);
         setWebViewClient(createWebViewClient());
         mContentLength = 0;
         loadUrl(SETUP_HTML);
+        getSettings().setJavaScriptEnabled(true);
 
         applyAttributes(context, attrs);
     }
 
     protected EditorWebViewClient createWebViewClient() {
         return new EditorWebViewClient();
+
     }
 
     public void setOnTextChangeListener(OnTextChangeListener listener) {

@@ -98,7 +98,9 @@ var RE = {
 	},
 	staticWords: function staticWords() {
 		var _self = this;
-		return _self.cache.editor.innerHTML.replace(/<div\sclass="tips">.*<\/div>|<\/?[^>]*>/g, '').trim().length;
+		var content = _self.cache.editor.innerHTML.replace(/<div\sclass="tips">.*<\/div>|<\/?[^>]*>/g, '').replace(/\s+/, '').trim();
+		console.log(content);
+		return content.length;
 	},
 	saveRange: function saveRange() {
 		//保存节点位置
