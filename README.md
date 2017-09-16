@@ -1,3 +1,3 @@
 # richedtor
 
-![images](https://github.com/laizimo/zimo-article/blob/master/image/prototype.png)
+![images](https://github.com/nowandfurure/richedtor/blob/master/sample.gif)
