@@ -3,16 +3,16 @@ package com.lu.lubottommenu;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.FloatRange;
-import android.support.annotation.IntRange;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.WindowManager;
 
 
 /**
+ * 工具类
  * Created by 陆正威 on 2017/4/6.
  */
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Utils {
 
     public static int[] getScreenSize(Context context) {
@@ -32,7 +32,12 @@ public class Utils {
         return (int) (pxValue / scale + 0.5f);
     }
 
-    //获得更深的颜色
+
+    /**
+     * @param color 处理的颜色
+     * @param i 处理的步长
+     * @return  处理完后较深的颜色
+     */
     public static int getDarkerColor(int color , @FloatRange(from = 0,to = 1) float i){
         float redrate = 0.299f;
         float greenrate = 0.587f;

@@ -240,7 +240,8 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
         if (mInsertedImages.containsKey(id))
             showPictureClickDialog(PictureHandleDialog.createDeleteDialog(id),new CharSequence[]{getString(R.string.delete)});
         else if (mFailedImages.containsKey(id)) {
-            showPictureClickDialog(PictureHandleDialog.createDeleteDialog(id),new CharSequence[]{getString(R.string.delete),getString(R.string.retry)});
+            showPictureClickDialog(PictureHandleDialog.createDeleteDialog(id),
+                    new CharSequence[]{getString(R.string.delete), getString(R.string.retry)});
         }
     }
 

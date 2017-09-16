@@ -3,19 +3,18 @@ package com.lu.lubottommenu.menuitem;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.widget.TextView;
 
 import com.lu.lubottommenu.logiclist.MenuItem;
 
-import java.io.Serializable;
-
 /**
+ *
  * Created by 陆正威 on 2017/9/9.
  */
 
+@SuppressWarnings("WeakerAccess")
 public class TextViewItem extends BottomMenuItem<TextView>{
     private String text;
 
@@ -50,11 +49,6 @@ public class TextViewItem extends BottomMenuItem<TextView>{
                 textView.setBackgroundColor(Color.TRANSPARENT);
             }
         }
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     @Override

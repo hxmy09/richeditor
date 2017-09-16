@@ -12,9 +12,11 @@ import com.lu.lubottommenu.logiclist.MenuItem;
 import java.io.Serializable;
 
 /**
+ * 下底栏选项的父类
  * Created by 陆正威 on 2017/9/6.
  */
 
+@SuppressWarnings("WeakerAccess")
 public abstract class BottomMenuItem<T extends View> implements IBottomMenuItem,Parcelable,Serializable{
 
     private MenuItem mMenuItem;
@@ -23,18 +25,23 @@ public abstract class BottomMenuItem<T extends View> implements IBottomMenuItem,
 
     private OnItemClickListener onItemClickListener;
 
-    public BottomMenuItem(Context context,MenuItem menuItem) {
+    public BottomMenuItem(Context context, MenuItem menuItem) {
         mMenuItem = menuItem;
         isSelected = false;
         mContext = context;
     }
 
-    public void onDisplayPrepare(){
+    /**
+     * 这个函数在视图被添加进父菜单行是执行
+     * 对内部View进行创建和设置
+     */
+    public final void onDisplayPrepare(){
         View v = mMenuItem.getContentView();
 
         if(v == null)
             mMenuItem.setContentView(createView());
 
+        //noinspection unchecked
         settingAfterCreate(isSelected, (T) (mMenuItem.getContentView()));
 
         mMenuItem.getContentView().setOnClickListener(new View.OnClickListener() {
@@ -45,6 +52,9 @@ public abstract class BottomMenuItem<T extends View> implements IBottomMenuItem,
         });
     }
 
+    /**
+     * 从LuBottomMenu移除时的工作
+     */
     public void onViewDestroy(){
         if(getMainView() != null) {
             getMainView().setOnClickListener(null);
@@ -52,21 +62,27 @@ public abstract class BottomMenuItem<T extends View> implements IBottomMenuItem,
         }
     }
 
+    /**
+     * @return 创建的View
+     */
     @NonNull
     public abstract T createView();
 
+    /**
+     * @param isSelected    是否被选择
+     * @param view  要处理的视图
+     * 创建视图后的设置工作
+     */
     public abstract void settingAfterCreate(boolean isSelected, T view);
 
     public void onSelectChange(boolean isSelected){
         //do nothing
     }
 
-    private void onItemClick(){
-        if(!onItemClickIntercept() && onItemClickListener != null)
-            onItemClickListener.onItemClick(mMenuItem);
-    }
-
-    //拦截从LuBottomMenu的监听事件
+    /**
+     * @return 是否拦截
+     *  拦截从LuBottomMenu的监听事件（其分发的点击事件）
+     */
     public boolean onItemClickIntercept(){
         return false;
     }
@@ -85,18 +101,18 @@ public abstract class BottomMenuItem<T extends View> implements IBottomMenuItem,
         return mMenuItem;
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+    public final void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
+    }
+
+    public final void setSelected(boolean selected) {
+        if(selected != isSelected)
+            onSelectChange(selected);
+        isSelected = selected;
     }
 
     public boolean isSelected() {
         return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        if(selected != isSelected)
-            onSelectChange(selected);
-        isSelected = selected;
     }
 
     public Context getContext() {
@@ -121,5 +137,10 @@ public abstract class BottomMenuItem<T extends View> implements IBottomMenuItem,
     protected BottomMenuItem(Parcel in) {
         this.mMenuItem = (MenuItem) in.readSerializable();
         this.isSelected = in.readByte() != 0;
+    }
+
+    private void onItemClick(){
+        if(!onItemClickIntercept() && onItemClickListener != null)
+            onItemClickListener.onItemClick(mMenuItem);
     }
 }

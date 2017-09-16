@@ -1,9 +1,13 @@
 package com.lu.richtexteditorlib;
 
+
+import android.support.v4.util.ArraySet;
+
 /**
  * Created by 陆正威 on 2017/9/15.
  */
 
+@SuppressWarnings("WeakerAccess")
 public class ItemIndex {
     public static final long INSERT_IMAGE = 0x01;
     public static final long A = 0x02;
@@ -21,4 +25,14 @@ public class ItemIndex {
     public static final long HALVING_LINE = 0x0e;
     public static final long LINK = 0x0f;
 
+    private static ArraySet<Long> registerSet = new ArraySet<>();
+
+    // TODO: 2017/9/16 为自定义添加按钮准备
+    public static boolean register(long id){
+        return registerSet.add(id);
+    }
+
+    public static boolean hasRegister(long id){
+        return registerSet.contains(id);
+    }
 }

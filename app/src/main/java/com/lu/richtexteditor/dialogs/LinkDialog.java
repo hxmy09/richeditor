@@ -1,6 +1,5 @@
 package com.lu.richtexteditor.dialogs;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -16,13 +15,13 @@ import com.lu.richtexteditor.R;
 import static com.lu.richtexteditor.R.id.cancel_btn;
 
 /**
+ * 链接创建对话框
  * Created by 陆正威 on 2017/9/11.
  */
 
 public class LinkDialog extends DialogFragment {
     public static final String Tag = "link_dialog_fragment";
 
-    private View dialog;
     private OnDialogClickListener listener;
     private String name;
     private String url;
@@ -35,9 +34,8 @@ public class LinkDialog extends DialogFragment {
     }
 
     public static LinkDialog createLinkDialog(){
-        final LinkDialog newDialog = new LinkDialog();
 
-        return newDialog;
+        return new LinkDialog();
     }
 
     public LinkDialog(){
@@ -53,7 +51,7 @@ public class LinkDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        dialog = inflater.inflate(R.layout.dialog_fragment_link,container,false);
+        View dialog = inflater.inflate(R.layout.dialog_fragment_link, container, false);
         Button comb = (Button) dialog.findViewById(R.id.confirm_btn);
         Button canb = (Button) dialog.findViewById(cancel_btn);
         final EditText urledt = (EditText) dialog.findViewById(R.id.url_edt);
@@ -98,6 +96,7 @@ public class LinkDialog extends DialogFragment {
         this.name = name;
     }
 
+    @SuppressWarnings("unused")
     public String getUrl() {
         return url;
     }

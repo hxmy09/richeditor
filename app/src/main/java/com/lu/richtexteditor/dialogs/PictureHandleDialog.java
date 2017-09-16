@@ -11,12 +11,12 @@ import android.view.View;
 import com.lu.richtexteditor.R;
 
 /**
+ * 图片处理对话框
  * Created by 陆正威 on 2017/9/12.
  */
 
 public class PictureHandleDialog extends DialogFragment {
     public static final String Tag = "delete_dialog_fragment";
-    private View dialog;
     private Long imageId;
     private CharSequence[] items;
     private OnDialogClickListener listener;
@@ -52,6 +52,7 @@ public class PictureHandleDialog extends DialogFragment {
                 .setTitle(R.string.handles).create();
     }
 
+    @SuppressWarnings("unused")
     public Long getImageId() {
         return imageId;
     }

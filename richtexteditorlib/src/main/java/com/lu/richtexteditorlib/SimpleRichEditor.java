@@ -55,7 +55,7 @@ public class SimpleRichEditor extends RichEditor {
     private LuBottomMenu mLuBottomMenu;
     private SelectController mSelectController;
     private OnEditorClickListener mOnEditorClickListener;
-    private ArrayList<Long> mFreeItems;//不受其他点击事件影响的items
+    private ArrayList<Long> mFreeItems;//不受其他items点击事件影响的items
 
     public SimpleRichEditor(Context context) {
         super(context);
@@ -281,6 +281,7 @@ public class SimpleRichEditor extends RichEditor {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setBold();
+                                //不拦截不在选择控制器中的元素让Menu自己控制选择显示效果
                                 return isInSelectController(item.getId());
                             }
                         }) : null)

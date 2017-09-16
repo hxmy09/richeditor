@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
+ * 双状态选择控制器，保证其中的选择是互斥的
  * Created by 陆正威 on 2017/9/12.
  */
 
+@SuppressWarnings("WeakerAccess")
 public class SelectController {
     private ArrayList<Long> stateAList;
     private ArrayDeque<Long> stateBList;
@@ -90,6 +92,7 @@ public class SelectController {
         void handleB2A(long id);
     }
 
+    @SuppressWarnings("unused")
     public abstract class StatesTransAdapter implements StatesTransHandler{
         @Override
         public void handleA2B(long id) {

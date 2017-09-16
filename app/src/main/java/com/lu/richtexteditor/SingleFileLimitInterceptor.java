@@ -12,13 +12,13 @@ import com.imnjh.imagepicker.PickerAction;
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.facebook.common.util.ByteConstants.KB;
 import static com.facebook.common.util.ByteConstants.MB;
 
 /**
  * SImagePicker 单文件大小限制拦截器
  * Created by 陆正威 on 2017/9/12.
  */
+@SuppressWarnings("WeakerAccess")
 public class SingleFileLimitInterceptor implements FileChooseInterceptor {
 
     private static final long MAX_FILE_SIZE_ORIGINAL = 2 * MB; // 2MB
