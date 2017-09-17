@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 
 import com.lu.lubottommenu.LuBottomMenu;
 import com.lu.lubottommenu.logiclist.MenuItem;
-import com.lu.lubottommenu.logiclist.MenuItemFactory;
 import com.lu.lubottommenu.menuitem.AbstractBottomMenuItem;
 import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
 import com.lu.richtexteditorlib.base.RichEditor;
@@ -26,6 +25,7 @@ import java.util.List;
 
 public class SimpleRichEditor extends RichEditor {
 
+    @SuppressWarnings("unused")
     public void setOnStateChangeListener(OnStateChangeListener mOnStateChangeListener) {
         this.mOnStateChangeListener = mOnStateChangeListener;
     }
@@ -41,6 +41,7 @@ public class SimpleRichEditor extends RichEditor {
         void onImageClick(Long id);
     }
 
+    @SuppressWarnings("unused")
     public abstract static class OnEditorClickListenerImp implements OnEditorClickListener {
         @Override
         public void onImageClick(Long id) {
@@ -395,6 +396,7 @@ public class SimpleRichEditor extends RichEditor {
         return this;
     }
 
+    @SuppressWarnings("unused")
     public SimpleRichEditor addCustomItem(long parentId, long id, AbstractBottomMenuItem item) {
         if (!mRegister.hasRegister(parentId)) {
             throw new RuntimeException(parentId + ":" + ItemIndex.NO_REGISTER_EXCEPTION);

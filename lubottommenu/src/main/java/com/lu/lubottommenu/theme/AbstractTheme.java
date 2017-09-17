@@ -5,9 +5,11 @@ import android.os.Parcel;
 import com.lu.lubottommenu.api.ITheme;
 
 /**
+ * 自定义主题接口
  * Created by 陆正威 on 2017/9/17.
  */
 
+@SuppressWarnings("WeakerAccess")
 public abstract class AbstractTheme implements ITheme{
     @Override
     public abstract int[] getBackGroundColors() ;

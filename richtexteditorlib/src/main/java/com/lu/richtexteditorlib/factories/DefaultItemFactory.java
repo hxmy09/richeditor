@@ -5,9 +5,8 @@ import android.support.annotation.DrawableRes;
 
 import com.lu.lubottommenu.logiclist.MenuItemFactory;
 import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
-import com.lu.richtexteditorlib.constant.ItemIndex;
 import com.lu.richtexteditorlib.R;
-import com.lu.richtexteditorlib.factories.DefaultItemFactory;
+import com.lu.richtexteditorlib.constant.ItemIndex;
 
 /**
  * public static final long INSERT_IMAGE = 0x01;
@@ -44,13 +43,11 @@ public class DefaultItemFactory {
     }
 
     public static ImageViewButtonItem generateAItem(Context context) {
-        ImageViewButtonItem item = generateAutoSetItem(context, ItemIndex.A, R.drawable.a);
-        return item;
+        return generateAutoSetItem(context, ItemIndex.A, R.drawable.a);
     }
 
     public static ImageViewButtonItem generateMoreItem(Context context) {
-        ImageViewButtonItem item = generateAutoSetItem(context, ItemIndex.MORE, R.drawable.more);
-        return item;
+        return generateAutoSetItem(context, ItemIndex.MORE, R.drawable.more);
     }
 
     public static ImageViewButtonItem generateUndoItem(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {

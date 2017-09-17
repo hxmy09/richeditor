@@ -4,6 +4,7 @@ package com.lu.richtexteditorlib.constant;
 import android.support.v4.util.ArraySet;
 
 /**
+ * ID 管理类
  * Created by 陆正威 on 2017/9/15.
  */
 

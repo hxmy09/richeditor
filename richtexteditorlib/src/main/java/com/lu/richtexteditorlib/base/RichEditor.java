@@ -175,15 +175,6 @@ public abstract class RichEditor extends WebView {
             mOnImageClickListener.onImageClick(Long.valueOf(url.replaceFirst(IMAGE_CLICK_SCHEME,"")));
     }
 
-
-    /**
-     * WebView的滚动事件
-     *
-     * @param l
-     * @param t
-     * @param oldl
-     * @param oldt
-     */
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
@@ -206,6 +197,7 @@ public abstract class RichEditor extends WebView {
     /**
      * Impliment in the activity/fragment/view that you want to listen to the webview
      */
+    @SuppressWarnings("WeakerAccess")
     public interface OnScrollChangedCallback {
         void onScroll(int dx, int dy);
     }
@@ -226,6 +218,7 @@ public abstract class RichEditor extends WebView {
         }
     }
 
+    @SuppressLint("RtlHardcoded")
     private void applyAttributes(Context context, AttributeSet attrs) {
         final int[] attrsArray = new int[]{
                 android.R.attr.gravity
@@ -261,12 +254,6 @@ public abstract class RichEditor extends WebView {
         ta.recycle();
     }
 
-
-    /**
-     * getText
-     *
-     * @return
-     */
     public void getHtmlAsyn() {
         exec("javascript:RE.getHtml4Android()");
     }
@@ -446,7 +433,7 @@ public abstract class RichEditor extends WebView {
         }
     }
 
-    protected class EditorWebViewClient extends WebViewClient {
+    private class EditorWebViewClient extends WebViewClient {
         @Override
         public void onPageFinished(WebView view, String url) {
             isReady = url.equalsIgnoreCase(SETUP_HTML);
@@ -455,6 +442,7 @@ public abstract class RichEditor extends WebView {
             }
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
@@ -494,7 +482,7 @@ public abstract class RichEditor extends WebView {
         return mContentLength;
     }
 
-    public class Android4JsInterface {
+    private class Android4JsInterface {
         @JavascriptInterface
         public void setViewEnabled(boolean enabled){
             if(mOnFocusChangeListener != null)
