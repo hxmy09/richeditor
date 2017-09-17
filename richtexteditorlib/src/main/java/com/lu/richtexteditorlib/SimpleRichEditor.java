@@ -8,7 +8,10 @@ import android.util.AttributeSet;
 import com.lu.lubottommenu.LuBottomMenu;
 import com.lu.lubottommenu.logiclist.MenuItem;
 import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
-import com.lu.myview.customview.richeditor.RichEditor;
+import com.lu.richtexteditorlib.base.RichEditor;
+import com.lu.richtexteditorlib.constant.ItemIndex;
+import com.lu.richtexteditorlib.factories.DefaultItemFactory;
+import com.lu.richtexteditorlib.utils.SelectController;
 
 import java.util.ArrayList;
 import java.util.List;
