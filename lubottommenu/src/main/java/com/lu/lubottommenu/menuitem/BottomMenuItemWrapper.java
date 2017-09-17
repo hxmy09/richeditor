@@ -3,26 +3,26 @@ package com.lu.lubottommenu.menuitem;
 import android.content.Context;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.AttributeSet;
 import android.view.View;
 
-import com.lu.lubottommenu.logiclist.MenuItemFactory;
 import com.lu.lubottommenu.logiclist.MenuItem;
+import com.lu.lubottommenu.logiclist.MenuItemFactory;
 
 /**
+ * unused
  * Created by 陆正威 on 2017/9/6.
  */
 
-public class BottomMenuItemWrapper extends BottomMenuItem {
+@SuppressWarnings({"WeakerAccess", "unused"})
+public class BottomMenuItemWrapper extends AbstractBottomMenuItem {
 
-    private BottomMenuItem actualItem;
+    private AbstractBottomMenuItem actualItem;
 
     public BottomMenuItemWrapper(Context context){
         this(context,null);
     }
 
-    BottomMenuItemWrapper(Context context,MenuItem menuItem) {
+    BottomMenuItemWrapper(Context context, MenuItem menuItem) {
         super(context,menuItem);
     }
 
@@ -30,20 +30,15 @@ public class BottomMenuItemWrapper extends BottomMenuItem {
         super(source);
     }
 
-    public void wrapper(BottomMenuItem item){
+    public void wrapper(AbstractBottomMenuItem item){
         actualItem = item;
     }
 
     /*
         生成默认BottomMenuItem
      */
-    private BottomMenuItem generateBottomMenuItem(Context context,Long id){
+    private AbstractBottomMenuItem generateBottomMenuItem(Context context, Long id){
         return MenuItemFactory.generateImageItem(context,id,-1);
-    }
-
-    @Override
-    public void onDisplayPrepare() {
-        actualItem.onDisplayPrepare();
     }
 
     @NonNull

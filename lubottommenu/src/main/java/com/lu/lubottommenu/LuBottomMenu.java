@@ -3,25 +3,23 @@ package com.lu.lubottommenu;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 
-import com.lu.lubottommenu.api.IBottomMenuItem;
+import com.lu.lubottommenu.api.ITheme;
 import com.lu.lubottommenu.logiclist.MenuItem;
-import com.lu.lubottommenu.logiclist.MenuItemFactory;
 import com.lu.lubottommenu.logiclist.MenuItemTree;
-import com.lu.lubottommenu.menuitem.BottomMenuItem;
+import com.lu.lubottommenu.menuitem.AbstractBottomMenuItem;
+import com.lu.lubottommenu.theme.LightTheme;
 
 
 import java.util.ArrayDeque;
@@ -32,6 +30,7 @@ import java.util.Set;
 
 
 /**
+ * 多叉分支的底部菜单
  * Created by 陆正威 on 2017/9/6.
  */
 @SuppressWarnings({"unchecked", "unused", "WeakerAccess"})
@@ -46,10 +45,11 @@ public class LuBottomMenu extends ViewGroup {
     private static int INNER_LAYOUT_PADDING_T = 0;
     private static int INNER_LAYOUT_PADDING_B = 0;
     private static float INNER_ITEM_PADDING_RATE = 0.44f;//内部图标内边距充填0.56
-    private static int[] COLOR_SET = {Color.WHITE, Color.argb(255, 252, 252, 252)};
+
+    private static int[] COLOR_SET;
 
     private MenuItemTree mMenuTree;
-    private HashMap<Long, BottomMenuItem> mBottomMenuItems;
+    private HashMap<Long, AbstractBottomMenuItem> mBottomMenuItems;
     private ArrayDeque<MenuItem> mPathRecord;//菜单展开路径栈,通过存储这个信息配合逻辑树恢复其他信息，时间换空间
     private ArrayList<LinearLayout> mDisplayMenus;
 
@@ -58,14 +58,15 @@ public class LuBottomMenu extends ViewGroup {
     private int mSingleRowHeight = 0;//每级菜单的高度
 
     private Paint mPaint;
+    private ITheme mTheme;
 
     private boolean isFirstMeasure = true;
     private boolean isFirstLayout = true;
     private boolean needLine = true;
 
-    private IBottomMenuItem.OnItemClickListener mOnItemClickListener;
+    private AbstractBottomMenuItem.OnItemClickListener mOnItemClickListener;
 
-    private IBottomMenuItem.OnItemClickListener mInnerListener;
+    private AbstractBottomMenuItem.OnItemClickListener mInnerListener;
 
     public LuBottomMenu(Context context) {
         this(context, null);
@@ -207,8 +208,8 @@ public class LuBottomMenu extends ViewGroup {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        Set<Map.Entry<Long, BottomMenuItem>> entrySet = mBottomMenuItems.entrySet();
-        for (Map.Entry<Long, BottomMenuItem> e :
+        Set<Map.Entry<Long, AbstractBottomMenuItem>> entrySet = mBottomMenuItems.entrySet();
+        for (Map.Entry<Long, AbstractBottomMenuItem> e :
                 entrySet) {
             e.getValue().onViewDestroy();
         }
@@ -236,7 +237,7 @@ public class LuBottomMenu extends ViewGroup {
         mPathRecord = new ArrayDeque<>();
         mBottomMenuItems = new HashMap<>();
 
-        mInnerListener = new IBottomMenuItem.OnItemClickListener() {
+        mInnerListener = new AbstractBottomMenuItem.OnItemClickListener() {
             @Override
             public void onItemClick(MenuItem menuItem) {
                 onItemClickPreHandle(menuItem);
@@ -273,7 +274,7 @@ public class LuBottomMenu extends ViewGroup {
                         mCurMenuItem = mCurMenuItem.getParent();
                 }
             } else {
-                BottomMenuItem newItem = getBottomMenuItem(menuItem);
+                AbstractBottomMenuItem newItem = getBottomMenuItem(menuItem);
                 newItem.setSelected(!newItem.isSelected());
             }
         } else {
@@ -281,7 +282,7 @@ public class LuBottomMenu extends ViewGroup {
                 removeAllLevels(mDisplayRowNum - mCurMenuItem.getDeep());
                 mCurMenuItem = mCurMenuItem.getParent();
             } else {
-                BottomMenuItem newItem = getBottomMenuItem(menuItem);
+                AbstractBottomMenuItem newItem = getBottomMenuItem(menuItem);
                 newItem.setSelected(!newItem.isSelected());
             }
         }
@@ -291,10 +292,12 @@ public class LuBottomMenu extends ViewGroup {
      * 增加一行菜单当未超过最大限制并且不是逻辑树中的叶子节点时
      */
     private void addOneLevel() {
-        Log.e("addOneLevel", mSingleRowHeight + "");
+        //Log.e("addOneLevel", mSingleRowHeight + "");
         if (mCurMenuItem == null || mCurMenuItem.isLeafNode() || mCurMenuItem.getDeep() >= MAX_LEVELS - 1)
             return;
         LinearLayout linearLayout = new LinearLayout(getContext());
+        if(mTheme == null)
+            createDefaultTheme();
 
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
         linearLayout.setBackgroundColor(getColorByDeep(mCurMenuItem.getDeep()));
@@ -368,8 +371,9 @@ public class LuBottomMenu extends ViewGroup {
             LinearLayout linearLayout = new LinearLayout(getContext());
             for (MenuItem item :
                     parent.getNextLevel()) {
-                BottomMenuItem bottomMenuItem = getBottomMenuItem(item);
+                AbstractBottomMenuItem bottomMenuItem = getBottomMenuItem(item);
                 bottomMenuItem.setOnItemClickListener(mInnerListener);
+                bottomMenuItem.setTheme(mTheme);
                 //当恢复时Context对象无法序列化，这里临时传入
                 if (bottomMenuItem.getContext() == null)
                     bottomMenuItem.setContext(getContext());
@@ -390,9 +394,10 @@ public class LuBottomMenu extends ViewGroup {
         } else {
             for (MenuItem item :
                     parent.getNextLevel()) {
-                BottomMenuItem bottomMenuItem = getBottomMenuItem(item);
+                AbstractBottomMenuItem bottomMenuItem = getBottomMenuItem(item);
                 bottomMenuItem.setOnItemClickListener(mInnerListener);
                 //当恢复时Context对象无法序列化，这里临时传入
+                bottomMenuItem.setTheme(mTheme);
                 if (bottomMenuItem.getContext() == null)
                     bottomMenuItem.setContext(getContext());
                 bottomMenuItem.onDisplayPrepare();
@@ -451,7 +456,7 @@ public class LuBottomMenu extends ViewGroup {
         return Math.max(height, 0);
     }
 
-    private BottomMenuItem getBottomMenuItem(MenuItem item) {
+    private AbstractBottomMenuItem getBottomMenuItem(MenuItem item) {
         return mBottomMenuItems.get(item.getId());
     }
 
@@ -489,6 +494,12 @@ public class LuBottomMenu extends ViewGroup {
         }
     }
 
+    private ITheme createDefaultTheme(){
+        mTheme = new LightTheme();
+        COLOR_SET = mTheme.getBackGroundColors();
+        return mTheme;
+    }
+
     @Override
     protected LayoutParams generateLayoutParams(LayoutParams p) {
         return new MarginLayoutParams(p);
@@ -497,7 +508,7 @@ public class LuBottomMenu extends ViewGroup {
     public static class SaveState extends BaseSavedState implements Parcelable {
         ArrayDeque<MenuItem> pathRecord;
         MenuItemTree menuItemTree;
-        HashMap<Long, BottomMenuItem> bottomMenuItems;
+        HashMap<Long, AbstractBottomMenuItem> bottomMenuItems;
 
         public SaveState(Parcelable superState) {
             super(superState);
@@ -545,20 +556,20 @@ public class LuBottomMenu extends ViewGroup {
         invalidate();
     }
 
-    public void setOnItemClickListener(IBottomMenuItem.OnItemClickListener mOnItemClickListener) {
+    public void setOnItemClickListener(AbstractBottomMenuItem.OnItemClickListener mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
     }
 
     public void setItemSelected(long id, boolean isSelected) {
-        BottomMenuItem bottomMenuItem = getBottomMenuItem(mMenuTree.getRootItem().getMenuItemById(id));
+        AbstractBottomMenuItem bottomMenuItem = getBottomMenuItem(mMenuTree.getRootItem().getMenuItemById(id));
         if (bottomMenuItem != null)
             bottomMenuItem.setSelected(isSelected);
     }
 
     //can't work now
     public void setEnabled(boolean enabled) {
-        Set<Map.Entry<Long, BottomMenuItem>> entrySet = mBottomMenuItems.entrySet();
-        for (Map.Entry<Long, BottomMenuItem> e :
+        Set<Map.Entry<Long, AbstractBottomMenuItem>> entrySet = mBottomMenuItems.entrySet();
+        for (Map.Entry<Long, AbstractBottomMenuItem> e :
                 entrySet) {
             //Log.e("setEnabled",enabled+""+e.getValue().getItemId());
             if (e.getValue().getMainView() != null)
@@ -577,7 +588,7 @@ public class LuBottomMenu extends ViewGroup {
     }
 
     public int isItemSelected2(MenuItem item) {
-        BottomMenuItem bottomMenuItem = getBottomMenuItem(item);
+        AbstractBottomMenuItem bottomMenuItem = getBottomMenuItem(item);
         if (bottomMenuItem != null)
             return bottomMenuItem.isSelected() ? 1 : 0;
         else
@@ -585,7 +596,7 @@ public class LuBottomMenu extends ViewGroup {
     }
 
     public int isItemSelected2(long id) {
-        BottomMenuItem bottomMenuItem = getBottomMenuItem(mMenuTree.getRootItem().getMenuItemById(id));
+        AbstractBottomMenuItem bottomMenuItem = getBottomMenuItem(mMenuTree.getRootItem().getMenuItemById(id));
         if (bottomMenuItem != null)
             return bottomMenuItem.isSelected() ? 1 : 0;
         else
@@ -593,7 +604,7 @@ public class LuBottomMenu extends ViewGroup {
     }
 
     public boolean isItemSelected(MenuItem item) {
-        BottomMenuItem bottomMenuItem = getBottomMenuItem(item);
+        AbstractBottomMenuItem bottomMenuItem = getBottomMenuItem(item);
         if (bottomMenuItem != null)
             return bottomMenuItem.isSelected();
         else
@@ -601,7 +612,7 @@ public class LuBottomMenu extends ViewGroup {
     }
 
     public boolean isItemSelected(long id) {
-        BottomMenuItem bottomMenuItem = getBottomMenuItem(mMenuTree.getRootItem().getMenuItemById(id));
+        AbstractBottomMenuItem bottomMenuItem = getBottomMenuItem(mMenuTree.getRootItem().getMenuItemById(id));
         if (bottomMenuItem != null)
             return bottomMenuItem.isSelected();
         else
@@ -626,7 +637,28 @@ public class LuBottomMenu extends ViewGroup {
         }
     }
 
-    public LuBottomMenu addRootItem(BottomMenuItem bottomMenuItem) {
+    public void setTheme(ITheme theme){
+        mTheme = theme;
+        COLOR_SET = theme.getBackGroundColors();
+
+        if(mDisplayMenus != null && !mDisplayMenus.isEmpty()){
+            Set<Map.Entry<Long,AbstractBottomMenuItem>> entries = mBottomMenuItems.entrySet();
+            for (Map.Entry<Long, AbstractBottomMenuItem> e :
+                   entries ) {
+                e.getValue().setThemeForDisplay(mTheme);
+            }
+        }
+
+        int i = 0;
+        if(mDisplayMenus != null)
+        for (LinearLayout ll :
+                mDisplayMenus) {
+            ll.setBackgroundColor(getColorByDeep(i++));
+        }
+        invalidate();
+    }
+
+    public LuBottomMenu addRootItem(AbstractBottomMenuItem bottomMenuItem) {
         if (bottomMenuItem == null) return this;
         MenuItem menuItem = bottomMenuItem.getMenuItem();
         mBottomMenuItems.put(menuItem.getId(), bottomMenuItem);
@@ -635,7 +667,7 @@ public class LuBottomMenu extends ViewGroup {
         return this;
     }
 
-    public LuBottomMenu addItem(MenuItem parentItem, BottomMenuItem bottomMenuItem) {
+    public LuBottomMenu addItem(MenuItem parentItem, AbstractBottomMenuItem bottomMenuItem) {
         if (bottomMenuItem == null) return this;
         MenuItem menuItem = bottomMenuItem.getMenuItem();
         if (parentItem == mMenuTree.getRootItem())
@@ -647,7 +679,7 @@ public class LuBottomMenu extends ViewGroup {
         return this;
     }
 
-    public LuBottomMenu addItem(long parentId, BottomMenuItem bottomMenuItem) {
+    public LuBottomMenu addItem(long parentId, AbstractBottomMenuItem bottomMenuItem) {
         if (bottomMenuItem == null) return this;
         MenuItem menuItem = bottomMenuItem.getMenuItem();
 
@@ -656,17 +688,17 @@ public class LuBottomMenu extends ViewGroup {
         return this;
     }
 
-    public LuBottomMenu addItems(long parentId, BottomMenuItem... menuItems) {
-        for (BottomMenuItem bottomMenuItem :
+    public LuBottomMenu addItems(long parentId, AbstractBottomMenuItem... menuItems) {
+        for (AbstractBottomMenuItem bottomMenuItem :
                 menuItems) {
             addItem(parentId, bottomMenuItem);
         }
         return this;
     }
 
-    public LuBottomMenu addItems(MenuItem parentItem, BottomMenuItem... menuItems) {
+    public LuBottomMenu addItems(MenuItem parentItem, AbstractBottomMenuItem... menuItems) {
         MenuItem menuItem;
-        for (BottomMenuItem bottomMenuItem :
+        for (AbstractBottomMenuItem bottomMenuItem :
                 menuItems) {
             menuItem = bottomMenuItem.getMenuItem();
 
@@ -695,7 +727,7 @@ public class LuBottomMenu extends ViewGroup {
             return this;
         }
 
-        public Builder addItem(MenuItem parentItem, BottomMenuItem bottomMenuItem) {
+        public Builder addItem(MenuItem parentItem, AbstractBottomMenuItem bottomMenuItem) {
             MenuItem menuItem = bottomMenuItem.getMenuItem();
             luBottomMenu.mBottomMenuItems.put(menuItem.getId(), bottomMenuItem);
             if (parentItem == luBottomMenu.mMenuTree.getRootItem())
@@ -705,9 +737,9 @@ public class LuBottomMenu extends ViewGroup {
             return this;
         }
 
-        public Builder addItem(long parentId, BottomMenuItem bottomMenuItem) {
+        public Builder addItem(long parentId, AbstractBottomMenuItem bottomMenuItem) {
             MenuItem menuItem = bottomMenuItem.getMenuItem();
-            bottomMenuItem.setOnItemClickListener(new IBottomMenuItem.OnItemClickListener() {
+            bottomMenuItem.setOnItemClickListener(new AbstractBottomMenuItem.OnItemClickListener() {
                 @Override
                 public void onItemClick(MenuItem menuItem) {
                     luBottomMenu.mCurMenuItem = menuItem;
@@ -721,12 +753,12 @@ public class LuBottomMenu extends ViewGroup {
             return this;
         }
 
-        public Builder addItems(long parentId, BottomMenuItem... menuItems) {
+        public Builder addItems(long parentId, AbstractBottomMenuItem... menuItems) {
             MenuItem menuItem;
-            for (BottomMenuItem bottomMenuItem :
+            for (AbstractBottomMenuItem bottomMenuItem :
                     menuItems) {
                 menuItem = bottomMenuItem.getMenuItem();
-                bottomMenuItem.setOnItemClickListener(new IBottomMenuItem.OnItemClickListener() {
+                bottomMenuItem.setOnItemClickListener(new AbstractBottomMenuItem.OnItemClickListener() {
                     @Override
                     public void onItemClick(MenuItem menuItem) {
                         luBottomMenu.mCurMenuItem = menuItem;
@@ -741,12 +773,12 @@ public class LuBottomMenu extends ViewGroup {
             return this;
         }
 
-        public Builder addItems(MenuItem parentItem, BottomMenuItem... menuItems) {
+        public Builder addItems(MenuItem parentItem, AbstractBottomMenuItem... menuItems) {
             MenuItem menuItem;
-            for (BottomMenuItem bottomMenuItem :
+            for (AbstractBottomMenuItem bottomMenuItem :
                     menuItems) {
                 menuItem = bottomMenuItem.getMenuItem();
-                bottomMenuItem.setOnItemClickListener(new IBottomMenuItem.OnItemClickListener() {
+                bottomMenuItem.setOnItemClickListener(new AbstractBottomMenuItem.OnItemClickListener() {
                     @Override
                     public void onItemClick(MenuItem menuItem) {
                         luBottomMenu.mCurMenuItem = menuItem;
