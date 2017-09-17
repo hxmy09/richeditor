@@ -1,5 +1,7 @@
 package com.lu.lubottommenu.api;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.View;
 
 import com.lu.lubottommenu.logiclist.MenuItem;
@@ -12,7 +14,14 @@ public interface IBottomMenuItem {
     Long getItemId();
     View getMainView();
 
-    interface OnItemClickListener {
+    interface OnItemClickListenerParcelable extends Parcelable {
         void onItemClick(MenuItem item);
+
+        @Override
+        int describeContents();
+
+        @Override
+        void writeToParcel(Parcel dest, int flags);
     }
+
 }

@@ -7,7 +7,8 @@ import android.util.AttributeSet;
 
 import com.lu.lubottommenu.LuBottomMenu;
 import com.lu.lubottommenu.logiclist.MenuItem;
-import com.lu.lubottommenu.menuitem.BottomMenuItem;
+import com.lu.lubottommenu.logiclist.MenuItemFactory;
+import com.lu.lubottommenu.menuitem.AbstractBottomMenuItem;
 import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
 import com.lu.richtexteditorlib.base.RichEditor;
 import com.lu.richtexteditorlib.constant.ItemIndex;
@@ -19,14 +20,16 @@ import java.util.List;
 
 
 /**
+ *
  * Created by 陆正威 on 2017/9/14.
  */
 
 public class SimpleRichEditor extends RichEditor {
 
-    public void setmOnStateChangeListener(OnStateChangeListener mOnStateChangeListener) {
+    public void setOnStateChangeListener(OnStateChangeListener mOnStateChangeListener) {
         this.mOnStateChangeListener = mOnStateChangeListener;
     }
+
 
     public interface OnEditorClickListener {
         void onLinkButtonClick();
@@ -78,7 +81,6 @@ public class SimpleRichEditor extends RichEditor {
     public SimpleRichEditor(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-
     public void setLuBottomMenu(@NonNull LuBottomMenu mLuBottomMenu) {
         this.mLuBottomMenu = mLuBottomMenu;
         init();
@@ -93,7 +95,15 @@ public class SimpleRichEditor extends RichEditor {
         mSelectController = SelectController.createController();
         mRegister = ItemIndex.getInstance().getRegister();
         mFreeItems = new ArrayList<>();
-//        mLuBottomMenu.
+
+        addImageInsert();
+        addTypefaceBranch(true, true, true, true, true);
+        addMoreBranch(true, true);
+        addUndo();
+        addRedo();
+
+//        等效与以下
+//       mLuBottomMenu.
 //                addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x01, R.drawable.insert_image, false)).//
 //                addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x02, R.drawable.a)).//
 //                addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x03, R.drawable.more)).//
@@ -113,11 +123,7 @@ public class SimpleRichEditor extends RichEditor {
         //mLuBottomMenu.setOnItemClickListener(this);
 
         //mSelectController.addAll(0x09L, 0x0aL, 0x0bL, 0x0cL, 0x0dL);
-        addImageInsert();
-        addTypefaceBranch(true, true, true, true, true);
-        addMoreBranch(true, true);
-        addUndo();
-        addRedo();
+
 
         mSelectController.setHandler(new SelectController.StatesTransHandler() {
             @Override
@@ -389,7 +395,7 @@ public class SimpleRichEditor extends RichEditor {
         return this;
     }
 
-    public SimpleRichEditor addCustomItem(long parentId, long id, BottomMenuItem item) {
+    public SimpleRichEditor addCustomItem(long parentId, long id, AbstractBottomMenuItem item) {
         if (!mRegister.hasRegister(parentId)) {
             throw new RuntimeException(parentId + ":" + ItemIndex.NO_REGISTER_EXCEPTION);
         }
@@ -398,16 +404,18 @@ public class SimpleRichEditor extends RichEditor {
 
         if (!mRegister.hasRegister(id))
             mRegister.register(id);
+
+        item.getMenuItem().setId(id);
         mLuBottomMenu.addItem(parentId, item);
         return this;
     }
 
-    public SimpleRichEditor addRootCustomItem(long id, BottomMenuItem item) {
+    public SimpleRichEditor addRootCustomItem(long id, AbstractBottomMenuItem item) {
         if (mRegister.isDefaultId(id))
             throw new RuntimeException(id + ":" + ItemIndex.HAS_REGISTER_EXCEPTION);
         if (!mRegister.hasRegister(id))
             mRegister.register(id);
-
+        item.getMenuItem().setId(id);
         mLuBottomMenu.addRootItem(item);
         return this;
     }

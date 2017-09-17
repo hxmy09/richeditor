@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -20,7 +21,7 @@ import com.lu.lubottommenu.logiclist.MenuItem;
  */
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class ImageViewButtonItem extends BottomMenuItem<ImageButton> implements Parcelable {
+public class ImageViewButtonItem extends AbstractBottomMenuItem<ImageButton> implements Parcelable {
 
     public interface OnImageViewButtonItemClickListener{
         boolean onItemClick(MenuItem item,boolean isSelected);
@@ -63,12 +64,12 @@ public class ImageViewButtonItem extends BottomMenuItem<ImageButton> implements 
     public void settingAfterCreate(boolean isSelected, final ImageButton imageViewButton) {
         if (enableAutoSet) {
             if (isSelected) {
-                imageViewButton.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
+                imageViewButton.setColorFilter(getTheme().getAccentColor(), PorterDuff.Mode.SRC_IN);
             } else {
-                imageViewButton.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+                imageViewButton.setColorFilter(getTheme().getNormalColor(), PorterDuff.Mode.SRC_IN);
             }
         }else {
-            imageViewButton.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+            imageViewButton.setColorFilter(getTheme().getNormalColor(), PorterDuff.Mode.SRC_IN);
         }
     }
 
@@ -81,7 +82,7 @@ public class ImageViewButtonItem extends BottomMenuItem<ImageButton> implements 
 
     @Override
     public void onSelectChange(boolean isSelected) {
-        ImageButton imageViewButton = (ImageButton) getMainView();
+        ImageButton imageViewButton = getMainView();
         if (imageViewButton == null) return;
         settingAfterCreate(isSelected, imageViewButton);
     }

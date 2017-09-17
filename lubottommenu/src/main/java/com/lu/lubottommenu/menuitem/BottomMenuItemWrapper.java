@@ -14,9 +14,9 @@ import com.lu.lubottommenu.logiclist.MenuItemFactory;
  */
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class BottomMenuItemWrapper extends BottomMenuItem {
+public class BottomMenuItemWrapper extends AbstractBottomMenuItem {
 
-    private BottomMenuItem actualItem;
+    private AbstractBottomMenuItem actualItem;
 
     public BottomMenuItemWrapper(Context context){
         this(context,null);
@@ -30,14 +30,14 @@ public class BottomMenuItemWrapper extends BottomMenuItem {
         super(source);
     }
 
-    public void wrapper(BottomMenuItem item){
+    public void wrapper(AbstractBottomMenuItem item){
         actualItem = item;
     }
 
     /*
         生成默认BottomMenuItem
      */
-    private BottomMenuItem generateBottomMenuItem(Context context,Long id){
+    private AbstractBottomMenuItem generateBottomMenuItem(Context context, Long id){
         return MenuItemFactory.generateImageItem(context,id,-1);
     }
 

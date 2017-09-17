@@ -15,7 +15,7 @@ import com.lu.lubottommenu.logiclist.MenuItem;
  */
 
 @SuppressWarnings("WeakerAccess")
-public class TextViewItem extends BottomMenuItem<TextView>{
+public class TextViewItem extends AbstractBottomMenuItem<TextView> {
     private String text;
 
     public TextViewItem(Context context,MenuItem menuItem, String text) {

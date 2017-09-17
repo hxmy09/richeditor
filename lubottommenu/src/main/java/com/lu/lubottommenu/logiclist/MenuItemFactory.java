@@ -24,6 +24,10 @@ public class MenuItemFactory {
         return new ImageViewButtonItem(context,generateMenuItem(id,null),uri);
     }
 
+    public static ImageViewButtonItem generateImageItem(Context context, int uri, boolean b){
+        return new ImageViewButtonItem(context,generateMenuItem(0x00,null),uri,b);
+    }
+
     public static TextViewItem generateTextItem(Context context, long id,String text){
         return new TextViewItem(context,generateMenuItem(id,null), text);
     }

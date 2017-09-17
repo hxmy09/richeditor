@@ -8,7 +8,6 @@ import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -21,8 +20,13 @@ import com.lu.base.depence.retrofit.uploader.beans.UploadProgress;
 import com.lu.base.depence.tools.SizeUtil;
 import com.lu.base.depence.tools.Utils;
 import com.lu.lubottommenu.LuBottomMenu;
-import com.lu.richtexteditor.dialogs.PictureHandleDialog;
+import com.lu.lubottommenu.logiclist.MenuItem;
+import com.lu.lubottommenu.logiclist.MenuItemFactory;
+import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
+import com.lu.lubottommenu.theme.DarkTheme;
+import com.lu.lubottommenu.theme.LightTheme;
 import com.lu.richtexteditor.dialogs.LinkDialog;
+import com.lu.richtexteditor.dialogs.PictureHandleDialog;
 import com.lu.richtexteditorlib.SimpleRichEditor;
 import com.lu.richtexteditorlib.base.RichEditor;
 
@@ -134,6 +138,21 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
             }
         });
         mRichTextView.setLuBottomMenu(mLuBottomMenu);
+
+        ImageViewButtonItem themeItem = MenuItemFactory.generateImageItem(this, R.drawable.theme,false);
+        themeItem.setOnItemClickListener(new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+            @Override
+            public boolean onItemClick(MenuItem item, boolean isSelected) {
+                if(!isSelected)
+                    mLuBottomMenu.setTheme(new DarkTheme());
+                else
+                    mLuBottomMenu.setTheme(new LightTheme());
+                return false;
+            }
+        });
+
+        mRichTextView.addRootCustomItem(0x10,themeItem);
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mButton = (Button) findViewById(R.id.button);
         mButton.setOnClickListener(this);

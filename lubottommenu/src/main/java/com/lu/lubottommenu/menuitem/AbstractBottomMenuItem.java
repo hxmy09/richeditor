@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.lu.lubottommenu.api.IBottomMenuItem;
+import com.lu.lubottommenu.api.ITheme;
 import com.lu.lubottommenu.logiclist.MenuItem;
 
 import java.io.Serializable;
@@ -17,15 +18,16 @@ import java.io.Serializable;
  */
 
 @SuppressWarnings("WeakerAccess")
-public abstract class BottomMenuItem<T extends View> implements IBottomMenuItem,Parcelable,Serializable{
+public abstract class AbstractBottomMenuItem<T extends View> implements IBottomMenuItem,Parcelable,Serializable{
 
     private MenuItem mMenuItem;
     private boolean isSelected = false;
     private transient Context mContext;
+    private ITheme mTheme;
 
     private OnItemClickListener onItemClickListener;
 
-    public BottomMenuItem(Context context, MenuItem menuItem) {
+    public AbstractBottomMenuItem(Context context, MenuItem menuItem) {
         mMenuItem = menuItem;
         isSelected = false;
         mContext = context;
@@ -93,8 +95,8 @@ public abstract class BottomMenuItem<T extends View> implements IBottomMenuItem,
     }
 
     @Override
-    public View getMainView() {
-        return mMenuItem.getContentView();
+    public T getMainView() {
+        return (T) mMenuItem.getContentView();
     }
 
     public MenuItem getMenuItem(){
@@ -102,7 +104,8 @@ public abstract class BottomMenuItem<T extends View> implements IBottomMenuItem,
     }
 
     public final void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
+        if(onItemClickListener!=this.onItemClickListener)
+            this.onItemClickListener = onItemClickListener;
     }
 
     public final void setSelected(boolean selected) {
@@ -123,6 +126,28 @@ public abstract class BottomMenuItem<T extends View> implements IBottomMenuItem,
         this.mContext = mContext;
     }
 
+    private void onItemClick(){
+        if(!onItemClickIntercept() && onItemClickListener != null)
+            onItemClickListener.onItemClick(mMenuItem);
+    }
+
+    public ITheme getTheme() {
+        return mTheme;
+    }
+
+    public void setTheme(ITheme mTheme) {
+        if(mTheme != this.mTheme)
+            this.mTheme = mTheme;
+    }
+
+    public void setThemeForDisplay(ITheme mTheme){
+        setTheme(mTheme);
+        if(getMainView()!=null){
+            settingAfterCreate(isSelected, getMainView());
+            getMainView().invalidate();
+        }
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -132,15 +157,32 @@ public abstract class BottomMenuItem<T extends View> implements IBottomMenuItem,
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeSerializable(this.mMenuItem);
         dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
+        dest.writeParcelable(this.mTheme, flags);
+        dest.writeParcelable(this.onItemClickListener, flags);
     }
 
-    protected BottomMenuItem(Parcel in) {
+    protected AbstractBottomMenuItem(Parcel in) {
         this.mMenuItem = (MenuItem) in.readSerializable();
         this.isSelected = in.readByte() != 0;
+        this.mTheme = in.readParcelable(ITheme.class.getClassLoader());
+        this.onItemClickListener = in.readParcelable(OnItemClickListener.class.getClassLoader());
     }
 
-    private void onItemClick(){
-        if(!onItemClickIntercept() && onItemClickListener != null)
-            onItemClickListener.onItemClick(mMenuItem);
+    public abstract static class OnItemClickListener implements OnItemClickListenerParcelable{
+
+        @Override
+        public abstract void onItemClick(MenuItem item) ;
+
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+
+        }
     }
+
 }
