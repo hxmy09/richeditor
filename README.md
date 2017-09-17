@@ -37,6 +37,6 @@
 
 ## 演示示例
 ![Example1](https://github.com/nowandfurure/richedtor/blob/master/sample1.gif)
-![Example1](https://github.com/nowandfurure/richedtor/blob/master/sample2.gif)
+![Example1](https://github.com/nowandfurure/richedtor/blob/master/sample3.gif)
 
 
