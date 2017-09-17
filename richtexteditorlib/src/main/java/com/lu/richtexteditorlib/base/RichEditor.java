@@ -54,7 +54,7 @@ public abstract class RichEditor extends WebView {
         void onTextChange(String text);
     }
 
-    public interface OnDecorationStateListener {
+    public interface OnStateChangeListener {
         void onStateChangeListener(String text, List<Type> types);
     }
 
@@ -88,7 +88,7 @@ public abstract class RichEditor extends WebView {
     private String mContents;
     private long mContentLength;
     private OnTextChangeListener mTextChangeListener;
-    private OnDecorationStateListener mDecorationStateListener;
+    private OnStateChangeListener mStateChangeListener;
     private AfterInitialLoadListener mLoadListener;
     private OnScrollChangedCallback mOnScrollChangedCallback;
     private OnLinkClickListener mOnLinkClickListener;
@@ -127,7 +127,7 @@ public abstract class RichEditor extends WebView {
 
     }
 
-    public void setOnTextChangeListener(OnTextChangeListener listener) {
+    protected void setOnTextChangeListener(OnTextChangeListener listener) {
         mTextChangeListener = listener;
     }
 
@@ -135,11 +135,11 @@ public abstract class RichEditor extends WebView {
         this.mOnTextLengthChangeListener = onTextLengthChangeListener;
     }
 
-    public void setOnDecorationChangeListener(OnDecorationStateListener listener) {
-        mDecorationStateListener = listener;
+    protected void setOnDecorationChangeListener(OnStateChangeListener listener) {
+        mStateChangeListener = listener;
     }
 
-    public void setOnInitialLoadListener(AfterInitialLoadListener listener) {
+    protected void setOnInitialLoadListener(AfterInitialLoadListener listener) {
         mLoadListener = listener;
     }
 
@@ -147,11 +147,11 @@ public abstract class RichEditor extends WebView {
         this.mOnFocusChangeListener = onFocusChangeListener;
     }
 
-    public void setOnLinkClickListener(OnLinkClickListener onLinkClickListener) {
+    protected void setOnLinkClickListener(OnLinkClickListener onLinkClickListener) {
         this.mOnLinkClickListener = onLinkClickListener;
     }
 
-    public void setOnImageClickListener(OnImageClickListener onImageClickListener) {
+    protected void setOnImageClickListener(OnImageClickListener onImageClickListener) {
         this.mOnImageClickListener = onImageClickListener;
     }
 
@@ -221,8 +221,8 @@ public abstract class RichEditor extends WebView {
             }
         }
 
-        if (mDecorationStateListener != null) {
-            mDecorationStateListener.onStateChangeListener(state, types);
+        if (mStateChangeListener != null) {
+            mStateChangeListener.onStateChangeListener(state, types);
         }
     }
 
@@ -261,22 +261,6 @@ public abstract class RichEditor extends WebView {
         ta.recycle();
     }
 
-    /**
-     * setText
-     *
-     * @param contents
-     */
-//    public void setHtml(String contents) {
-//        if (contents == null) {
-//            contents = "";
-//        }
-//        try {
-//            exec("javascript:RE.setHtml('" + URLEncoder.encode(contents, "UTF-8") + "');");
-//        } catch (UnsupportedEncodingException e) {
-//            // No handling
-//        }
-//        mContents = contents;
-//    }
 
     /**
      * getText
@@ -291,14 +275,6 @@ public abstract class RichEditor extends WebView {
         return mContents;
     }
 
-//    public void setEditorFontColor(int color) {
-//        String hex = convertHexColorString(color);
-//        exec("javascript:RE.setBaseTextColor('" + hex + "');");
-//    }
-//
-//    public void setEditorFontSize(int px) {
-//        exec("javascript:RE.setBaseFontSize('" + px + "px');");
-//    }
 
     @Override
     public void setPadding(int left, int top, int right, int bottom) {
@@ -321,36 +297,7 @@ public abstract class RichEditor extends WebView {
     public void setBackgroundColor(int color) {
         super.setBackgroundColor(color);
     }
-//
-//    @Override
-//    public void setBackgroundResource(int resid) {
-//        Bitmap bitmap = Utils.decodeResource(getContext(), resid);
-//        String base64 = Utils.toBase64(bitmap);
-//        bitmap.recycle();
-//
-//        exec("javascript:RE.setBackgroundImage('url(data:image/png;base64," + base64 + ")');");
-//    }
 
-//    @Override
-//    public void setBackground(Drawable background) {
-//        Bitmap bitmap = Utils.toBitmap(background);
-//        String base64 = Utils.toBase64(bitmap);
-//        bitmap.recycle();
-//
-//        exec("javascript:RE.setBackgroundImage('url(data:image/png;base64," + base64 + ")');");
-//    }
-//
-//    public void setBackground(String url) {
-//        exec("javascript:RE.setBackgroundImage('url(" + url + ")');");
-//    }
-
-//    public void setEditorWidth(int px) {
-//        exec("javascript:RE.setWidth('" + px + "px');");
-//    }
-//
-//    public void setEditorHeight(int px) {
-//        exec("javascript:RE.setHeight('" + px + "px');");
-//    }
 
     public void setPlaceholder(String placeholder) {
         exec("javascript:RE.setPlaceholder('" + placeholder + "');");
@@ -387,47 +334,10 @@ public abstract class RichEditor extends WebView {
         exec("javascript:RE.exec('italic');");
     }
 
-//    public void setSubscript() {
-//        exec("javascript:RE.setSubscript();");
-//    }
-//
-//    public void setSuperscript() {
-//        exec("javascript:RE.setSuperscript();");
-//    }
-
     public void setStrikeThrough() {
         exec("javascript:RE.saveRange()");
         exec("javascript:RE.exec('strikethrough');");
     }
-
-//    public void setUnderline() {
-//        exec("javascript:RE.setUnderline();");
-//    }
-
-//    public void setTextColor(int color) {
-//        exec("javascript:RE.prepareInsert();");
-//
-//        String hex = convertHexColorString(color);
-//        exec("javascript:RE.setTextColor('" + hex + "');");
-//    }
-
-//    public void setTextBackgroundColor(int color) {
-//        exec("javascript:RE.prepareInsert();");
-//
-//        String hex = convertHexColorString(color);
-//        exec("javascript:RE.setTextBackgroundColor('" + hex + "');");
-//    }
-
-//    public void setFontSize(int fontSize) {
-//        if (fontSize > 7 || fontSize < 1) {
-//            Log.e("RichEditor", "Font size should have a value between 1-7");
-//        }
-//        exec("javascript:RE.setFontSize('" + fontSize + "');");
-//    }
-
-//    public void removeFormat() {
-//        exec("javascript:RE.removeFormat();");
-//    }
 
     public void setHeading(int heading, boolean b) {
         exec("javascript:RE.saveRange();");
@@ -438,26 +348,6 @@ public abstract class RichEditor extends WebView {
         }
     }
 
-//    public void setIndent() {
-//        exec("javascript:RE.setIndent();");
-//    }
-//
-//    public void setOutdent() {
-//        exec("javascript:RE.setOutdent();");
-//    }
-//
-//    public void setAlignLeft() {
-//        exec("javascript:RE.setJustifyLeft();");
-//    }
-//
-//    public void setAlignCenter() {
-//        exec("javascript:RE.setJustifyCenter();");
-//    }
-//
-//    public void setAlignRight() {
-//        exec("javascript:RE.setJustifyRight();");
-//    }
-
     public void setBlockquote(boolean b) {
         exec("javascript:RE.saveRange();");
         if(b){
@@ -466,15 +356,6 @@ public abstract class RichEditor extends WebView {
             exec("javascript:RE.exec('p')");
         }
     }
-
-
-//    public void setBullets() {
-//        exec("javascript:RE.setBullets();");
-//    }
-//
-//    public void setNumbers() {
-//        exec("javascript:RE.setNumbers();");
-//    }
 
     public void insertImage(String url,Long id, long width ,long height) {
         exec("javascript:RE.saveRange();");

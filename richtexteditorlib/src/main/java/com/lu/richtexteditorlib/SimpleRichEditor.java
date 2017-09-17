@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 
 import com.lu.lubottommenu.LuBottomMenu;
 import com.lu.lubottommenu.logiclist.MenuItem;
+import com.lu.lubottommenu.menuitem.BottomMenuItem;
 import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
 import com.lu.richtexteditorlib.base.RichEditor;
 import com.lu.richtexteditorlib.constant.ItemIndex;
@@ -22,6 +23,10 @@ import java.util.List;
  */
 
 public class SimpleRichEditor extends RichEditor {
+
+    public void setmOnStateChangeListener(OnStateChangeListener mOnStateChangeListener) {
+        this.mOnStateChangeListener = mOnStateChangeListener;
+    }
 
     public interface OnEditorClickListener {
         void onLinkButtonClick();
@@ -59,6 +64,8 @@ public class SimpleRichEditor extends RichEditor {
     private SelectController mSelectController;
     private OnEditorClickListener mOnEditorClickListener;
     private ArrayList<Long> mFreeItems;//不受其他items点击事件影响的items
+    private ItemIndex.Register mRegister;
+    private OnStateChangeListener mOnStateChangeListener;
 
     public SimpleRichEditor(Context context) {
         super(context);
@@ -75,7 +82,7 @@ public class SimpleRichEditor extends RichEditor {
     public void setLuBottomMenu(@NonNull LuBottomMenu mLuBottomMenu) {
         this.mLuBottomMenu = mLuBottomMenu;
         init();
-        initRichTextViewListeners(this);
+        initRichTextViewListeners();
     }
 
     public void setOnEditorClickListener(OnEditorClickListener mOnEditorClickListener) {
@@ -84,6 +91,7 @@ public class SimpleRichEditor extends RichEditor {
 
     private void init() {
         mSelectController = SelectController.createController();
+        mRegister = ItemIndex.getInstance().getRegister();
         mFreeItems = new ArrayList<>();
 //        mLuBottomMenu.
 //                addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x01, R.drawable.insert_image, false)).//
@@ -126,29 +134,13 @@ public class SimpleRichEditor extends RichEditor {
         });
     }
 
-    private void initRichTextViewListeners(final RichEditor editor) {
+    private void initRichTextViewListeners() {
 
-//        editor.setOnDecorationChangeListener(new RichEditor.OnDecorationStateListener() {
-//            @Override
-//            public void onStateChangeListener(String text, List<Type> types) {
-//                for (long i = BOLD.getTypeCode(); i <= STRIKETHROUGH.getTypeCode(); i++) {
-//                    mLuBottomMenu.setItemSelected(i, false);
-//                }
-//                mSelectController.reset();
-//                for (RichEditor.Type t :
-//                        types) {
-//                    if (!mSelectController.contain(t.getTypeCode()))
-//                        mLuBottomMenu.setItemSelected(t.getTypeCode(), true);
-//                    else
-//                        mSelectController.changeState(t.getTypeCode());
-//
-//                }
-//            }
-//        });
-
-        editor.setOnDecorationChangeListener(new OnDecorationStateListener() {
+        setOnDecorationChangeListener(new OnStateChangeListener() {
             @Override
             public void onStateChangeListener(String text, List<Type> types) {
+                onStateChange(text,types);
+
                 for (long id :
                         mFreeItems) {
                     mLuBottomMenu.setItemSelected(id, false);
@@ -160,18 +152,17 @@ public class SimpleRichEditor extends RichEditor {
                         mLuBottomMenu.setItemSelected(t.getTypeCode(), true);
                     else
                         mSelectController.changeState(t.getTypeCode());
-
                 }
 
             }
         });
-        editor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
+        setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
             @Override
             public void onTextChange(String text) {
                 //Log.e("onTextChange", text);
             }
         });
-        editor.setOnFocusChangeListener(new RichEditor.OnFocusChangeListener() {
+        setOnFocusChangeListener(new RichEditor.OnFocusChangeListener() {
             @Override
             public void onFocusChange(boolean isFocus) {
                 if (!isFocus) {
@@ -184,20 +175,20 @@ public class SimpleRichEditor extends RichEditor {
 
             }
         });
-        editor.setOnLinkClickListener(new RichEditor.OnLinkClickListener() {
+        setOnLinkClickListener(new RichEditor.OnLinkClickListener() {
             @Override
             public void onLinkClick(String linkName, String url) {
                 showChangeLinkDialog(linkName, url);
             }
         });
-        editor.setOnImageClickListener(new RichEditor.OnImageClickListener() {
+        setOnImageClickListener(new RichEditor.OnImageClickListener() {
             @Override
             public void onImageClick(Long id) {
                 showDeleteDialog(id);
             }
         });
 
-        editor.setOnInitialLoadListener(new RichEditor.AfterInitialLoadListener() {
+        setOnInitialLoadListener(new RichEditor.AfterInitialLoadListener() {
             @Override
             public void onAfterInitialLoad(boolean isReady) {
                 if (isReady)
@@ -205,39 +196,17 @@ public class SimpleRichEditor extends RichEditor {
             }
         });
     }
-//
-//    @Override
-//    public void onItemClick(MenuItem item) {
-//        final long id = item.getId();
-//
-//        if (mSelectController.contain(id)) {
-//            if (id > 0x09) {
-//                setHeading((int) (id - 0x09),
-//                        mLuBottomMenu.isItemSelected2(item) == 1);
-//            }
-//            mSelectController.changeState(id);
-//        } else {
-//            if (id == 0x01) {
-//                showImagePicker();
-//            } else if (id == 0x04) {
-//                undo();
-//            } else if (id == 0x05) {
-//                redo();
-//            } else if (BOLD.isMapTo(id)) {
-//                setBold();
-//            } else if (ITALIC.isMapTo(id)) {
-//                setItalic();
-//            } else if (STRIKETHROUGH.isMapTo(id)) {
-//                setStrikeThrough();
-//            } else if (BLOCKQUOTE.isMapTo(id)) {
-//                setBlockquote(mLuBottomMenu.isItemSelected2(item) == 1);
-//            } else if (id == 0x0e) {
-//                insertHr();
-//            } else if (id == 0x0f) {
-//                showLinkDialog();
-//            }
-//        }
-//    }
+
+
+    /**
+     * @param text  传入的字段
+     * @param types 含有的类型
+     * 自定义时添加监听以实现自定义按钮的逻辑
+     */
+    private void onStateChange(String text, List<Type> types) {
+        if(mOnStateChangeListener != null)
+            mOnStateChangeListener.onStateChangeListener(text,types);
+    }
 
     private void showLinkDialog() {
         if (mOnEditorClickListener != null)
@@ -417,6 +386,29 @@ public class SimpleRichEditor extends RichEditor {
                 return false;
             }
         }));
+        return this;
+    }
+
+    public SimpleRichEditor addCustomItem(long parentId, long id, BottomMenuItem item) {
+        if (!mRegister.hasRegister(parentId)) {
+            throw new RuntimeException(parentId + ":" + ItemIndex.NO_REGISTER_EXCEPTION);
+        }
+        if (mRegister.isDefaultId(id))
+            throw new RuntimeException(id + ":" + ItemIndex.HAS_REGISTER_EXCEPTION);
+
+        if (!mRegister.hasRegister(id))
+            mRegister.register(id);
+        mLuBottomMenu.addItem(parentId, item);
+        return this;
+    }
+
+    public SimpleRichEditor addRootCustomItem(long id, BottomMenuItem item) {
+        if (mRegister.isDefaultId(id))
+            throw new RuntimeException(id + ":" + ItemIndex.HAS_REGISTER_EXCEPTION);
+        if (!mRegister.hasRegister(id))
+            mRegister.register(id);
+
+        mLuBottomMenu.addRootItem(item);
         return this;
     }
 }

@@ -125,4 +125,33 @@ public class DefaultItemFactory {
         return item;
     }
 
+    public static ImageViewButtonItem generateDefaultItem(Context context,Long id,ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+        switch (id.intValue()){
+            case (int) ItemIndex.BOLD:
+                return generateBoldItem(context, listener);
+            case (int) ItemIndex.A:
+                return generateAItem(context);
+            case (int) ItemIndex.ITALIC:
+                return generateItalicItem(context, listener);
+            case (int) ItemIndex.STRIKE_THROUGH:
+                return generateStrikeThroughItem(context, listener);
+            case (int) ItemIndex.BLOCK_QUOTE:
+                return generateBlockQuoteItem(context, listener);
+            case (int) ItemIndex.H1:
+                return generateH1Item(context, listener);
+            case (int) ItemIndex.H2:
+                return generateH2Item(context, listener);
+            case (int) ItemIndex.H3:
+                return generateH3Item(context, listener);
+            case (int) ItemIndex.H4:
+                return generateH4Item(context, listener);
+            case (int) ItemIndex.HALVING_LINE:
+                return generateHalvingLineItem(context,listener);
+            case (int) ItemIndex.LINK:
+                return generateLinkItem(context, listener);
+            default:
+                return null;
+        }
+    }
+
 }

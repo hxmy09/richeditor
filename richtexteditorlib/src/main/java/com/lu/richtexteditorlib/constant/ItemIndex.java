@@ -9,6 +9,9 @@ import android.support.v4.util.ArraySet;
 
 @SuppressWarnings("WeakerAccess")
 public class ItemIndex {
+    public static final String HAS_REGISTER_EXCEPTION = "this id has been register";
+    public static final String NO_REGISTER_EXCEPTION = "this id has not been register";
+
     public static final long INSERT_IMAGE = 0x01;
     public static final long A = 0x02;
     public static final long MORE = 0x03;
@@ -24,15 +27,52 @@ public class ItemIndex {
     public static final long H4 = 0x0d;
     public static final long HALVING_LINE = 0x0e;
     public static final long LINK = 0x0f;
+    private long[] defaultItems ={INSERT_IMAGE,A,MORE,UNDO,REDO,BLOCK_QUOTE,BOLD,ITALIC,STRIKE_THROUGH,H1,H2,H3,H4,HALVING_LINE,LINK};
 
-    private static ArraySet<Long> registerSet = new ArraySet<>();
+    private ArraySet<Long> registerSet = new ArraySet<>();
+    private final static ItemIndex instance = new ItemIndex();
+    private final Register register = new Register();
 
-    // TODO: 2017/9/16 为自定义添加按钮准备
-    public static boolean register(long id){
-        return registerSet.add(id);
+    private ItemIndex(){
+        init();
     }
 
-    public static boolean hasRegister(long id){
-        return registerSet.contains(id);
+    public static ItemIndex getInstance(){
+        return instance;
+    }
+
+    public Register getRegister(){
+        return register;
+    }
+
+    private void init(){
+        for (long id :
+                defaultItems) {
+            registerSet.add(id);
+        }
+    }
+    // TODO: 2017/9/16 为自定义添加按钮准备
+    public class Register{
+
+        Register(){
+
+        }
+
+        public boolean register(long id){
+            return registerSet.add(id);
+        }
+
+        public boolean hasRegister(long id){
+            return registerSet.contains(id);
+        }
+
+        public boolean isDefaultId(long id){
+            for (long i :
+                    defaultItems) {
+                if(i == id)
+                    return true;
+            }
+            return false;
+        }
     }
 }
