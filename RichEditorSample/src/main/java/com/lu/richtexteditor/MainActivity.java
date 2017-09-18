@@ -60,30 +60,30 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState != null) {
-            initView();
-            mInsertedImages = new HashMap<>();
-            mFailedImages = new HashMap<>();
-            mRichTextView.restoreState(savedInstanceState);
-        }
-        else {
+//        if (savedInstanceState != null) {
+//            initView();
+//            mInsertedImages = new HashMap<>();
+//            mFailedImages = new HashMap<>();
+//            mRichTextView.restoreState(savedInstanceState);
+//        }
+//        else {
             mInsertedImages = new HashMap<>();
             mFailedImages = new HashMap<>();
             initView();
             mRichTextView.load();
-        }
+//        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mRichTextView.saveState(outState);
+        //mRichTextView.saveState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mRichTextView.restoreState(savedInstanceState);
+        //mRichTextView.restoreState(savedInstanceState);
     }
 
     @Override
