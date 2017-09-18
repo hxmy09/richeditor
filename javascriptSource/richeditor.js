@@ -22,7 +22,8 @@ const RE = (function(){
 		cache: {
 			editor: null,
 			title: null,
-			currentLink: null
+			currentLink: null,
+			line: null
 		},
 
 		/**
@@ -84,6 +85,7 @@ const RE = (function(){
 			_self.cache.editor = document.getElementById('editor');
 			_self.cache.title = document.getElementById('title');
 			_self.cache.editor.style.minHeight = window.innerHeight - 69 + 'px';
+			_self.cache.line = document.getElementsByClassName('line')[0];
 		},
 
 		/**
@@ -159,6 +161,20 @@ const RE = (function(){
 			select.removeAllRanges();
 			select.addRange(range);
 			_self.cache.editor.focus();
+		},
+
+
+		setBackgroundColor: function (r ,g, b) {
+				document.body.style.backgroundColor = rgb(r, g, b);
+		},
+		setFontColor: function setFontColor(r, g, b) {
+				var _self = this;
+				_self.cache.editor.style.color = rgb(r, g, b);
+		},
+
+		setLineColor: function setLineColor(r, g, b) {
+				var _self = this;
+				_self.cache.editor.style.broderColor = rgb(r, g, b);
 		},
 
 		/**

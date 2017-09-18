@@ -11,7 +11,8 @@ var RE = {
 	cache: {
 		editor: null,
 		title: null,
-		currentLink: null
+		currentLink: null,
+		line: null
 	},
 	commandSet: ['bold', 'italic', 'strikethrough', 'redo', 'undo'],
 	schemeCache: {
@@ -75,6 +76,7 @@ var RE = {
 		var _self = this;
 		_self.cache.editor = document.getElementById('editor');
 		_self.cache.title = document.getElementById('title');
+		_self.cache.line = document.getElementsByClassName('line')[0];
 		_self.cache.editor.style.minHeight = window.innerHeight - 69 + 'px';
 	},
 	initSetting: function initSetting() {
@@ -180,6 +182,18 @@ var RE = {
 		var _self = this;
 		document.execCommand('insertHtml', false, html);
 	},
+	setBackgroundColor: function setBackgroundColor(color) {
+	    var _self = this;
+	    document.body.style.backgroundColor = color;
+	},
+	setFontColor: function setFontColor(color) {
+	    var _self = this;
+	    _self.cache.editor.style.color = color;
+	},
+	setLineColor: function setLineColor(color) {
+	    var _self = this;
+	    _self.cache.editor.style.borderColor = color;
+	},
 	insertLine: function insertLine() {
 		var _self = this;
 		var html = '<hr><div><br></div>';
@@ -221,11 +235,11 @@ var RE = {
 			newWidth = width;
 			newHeight = height;
 		}
-		var image = '<div><br></div><div class="img-block">\n\t\t\t\t<div style="width: ' + newWidth + 'px" class="process">\n\t\t\t\t\t<div class="fill">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<img class="images" data-id="' + id + '" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px;" src="' + url + '"/>\n\t\t\t\t<div class="cover" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px"></div>\n\t\t\t\t<div class="delete">\n\t\t\t\t\t<img src="./reload.png">\n\t\t\t\t\t<div class="tips">\u56FE\u7247\u4E0A\u4F20\u5931\u8D25\uFF0C\u8BF7\u70B9\u51FB\u91CD\u8BD5</div>\n\t\t\t\t</div>\n\t\t\t\t<input type="text" placeholder="\u8BF7\u8F93\u5165\u56FE\u7247\u540D\u5B57">\n\t\t\t</div><div><br></div>';
+		var image = '<div><br></div><div class="block">\n\t\t\t\t<div class="img-block"><div style="width: ' + newWidth + 'px" class="process">\n\t\t\t\t\t<div class="fill">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<img class="images" data-id="' + id + '" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px;" src="' + url + '"/>\n\t\t\t\t<div class="cover" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px"></div>\n\t\t\t\t<div class="delete">\n\t\t\t\t\t<img src="./reload.png">\n\t\t\t\t\t<div class="tips">\u56FE\u7247\u4E0A\u4F20\u5931\u8D25\uFF0C\u8BF7\u70B9\u51FB\u91CD\u8BD5</div>\n\t\t\t\t</div></div>\n\t\t\t\t<input type="text" placeholder="\u8BF7\u8F93\u5165\u56FE\u7247\u540D\u5B57">\n\t\t\t</div><div><br></div>';
 		_self.insertHtml(image);
 		var img = document.querySelector('img[data-id="' + id + '"]');
 		var imgBlock = img.parentNode;
-		imgBlock.contentEditable = false;
+		imgBlock.parentNode.contentEditable = false;
 		imgBlock.addEventListener('click', function (e) {
 			e.stopPropagation();
 			var current = e.currentTarget;
@@ -233,37 +247,37 @@ var RE = {
 			var id = img.getAttribute('data-id');
 			window.location.href = _self.schemeCache.IMAGE_SCHEME + encodeURI(id);
 		}, false);
-		_self.imageCache.set(id, imgBlock);
+		_self.imageCache.set(id, imgBlock.parentNode);
 	},
 	changeProcess: function changeProcess(id, process) {
 		var _self = this;
-		var imgBlock = _self.imageCache.get(id);
-		var fill = imgBlock.querySelector('.fill');
+		var block = _self.imageCache.get(id);
+		var fill = block.querySelector('.fill');
 		fill.style.width = process + '%';
 		if (process == 100) {
-			var cover = imgBlock.querySelector('.cover');
-			var process = imgBlock.querySelector('.process');
+			var cover = block.querySelector('.cover');
+			var process = block.querySelector('.process');
+			var imgBlock = block.querySelector('.img-block');
 			imgBlock.removeChild(cover);
 			imgBlock.removeChild(process);
 		}
 	},
 	removeImage: function removeImage(id) {
 		var _self = this;
-		var imgBlock = _self.imageCache.get(id);
-		imgBlock.parentNode.removeChild(imgBlock);
+		var block = _self.imageCache.get(id);
+		block.parentNode.removeChild(block);
 		_self.imageCache.delete(id);
 	},
 	uploadFailure: function uploadFailure(id) {
 		var _self = this;
-		var imgBlock = _self.imageCache.get(id);
-		var del = imgBlock.querySelector('.delete');
+		var block = _self.imageCache.get(id);
+		var del = block.querySelector('.delete');
 		del.style.display = 'block';
-		console.log('uploadFailure');
 	},
 	uploadReload: function uploadReload(id) {
 		var _self = this;
-		var imgBlock = _self.imageCache.get(id);
-		var del = imgBlock.querySelector('.delete');
+		var block = _self.imageCache.get(id);
+		var del = block.querySelector('.delete');
 		del.style.display = 'none';
 	}
 };
