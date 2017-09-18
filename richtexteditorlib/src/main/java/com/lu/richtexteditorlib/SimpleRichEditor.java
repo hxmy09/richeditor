@@ -3,6 +3,7 @@ package com.lu.richtexteditorlib;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.graphics.ColorUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -18,6 +19,7 @@ import com.lu.richtexteditorlib.base.RichEditor;
 import com.lu.richtexteditorlib.constant.ItemIndex;
 import com.lu.richtexteditorlib.factories.DefaultItemFactory;
 import com.lu.richtexteditorlib.utils.SelectController;
+import com.lu.richtexteditorlib.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -260,6 +262,12 @@ public class SimpleRichEditor extends RichEditor {
 
     public void setTheme(ITheme theme){
         mLuBottomMenu.setTheme(theme);
+        String backgroundColor = Utils.converInt2HexColor(theme.getBackGroundColors()[0]);
+        String fontColor = Utils.converInt2HexColor(theme.getNormalColor());
+        int color = ColorUtils.blendARGB(theme.getNormalColor(),theme.getBackGroundColors()[0],0.5f);
+
+        exec("javascript:RE.setBackgroundColor('"+backgroundColor+"');" );
+        exec("javascript:RE.setFontColor('"+fontColor+"');");
         //do something
     }
 

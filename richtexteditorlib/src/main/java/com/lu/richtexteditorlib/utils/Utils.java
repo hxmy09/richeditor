@@ -76,13 +76,7 @@ public class Utils {
         return statusHeight;
     }
 
-    // 像 素 = dp * 屏幕密度
-
-    /**
-     * 根据手机的分辨率从 dip 的单位 转成为 px(像素) ,再四舍五入
-     */
-    public static int dip2px(Context context, float dpValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
+    public static String converInt2HexColor(int color){
+        return "#" + Integer.toHexString(color).substring(2);
     }
 }
