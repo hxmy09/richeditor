@@ -2,9 +2,12 @@ package com.lu.lubottommenu;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.transition.Transition;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -62,5 +65,19 @@ class AnimatorUtil {
                         }).start();
             }
         });
+    }
+
+    static void setTransition(ViewGroup viewGroup,int width,int height){
+        //设置给ViewGroup容器
+//        viewGroup.setLayoutTransition(new LayoutTransition());
+//        ObjectAnimator addAnimator = ObjectAnimator.ofFloat(null, "translationX",height ,0);
+//        ObjectAnimator removeAnimator = ObjectAnimator.ofFloat(null, "translationY", 0,- height);
+//        viewGroup.getLayoutTransition().setDuration(100);
+//        viewGroup.getLayoutTransition()
+//                .setAnimator(LayoutTransition.APPEARING, addAnimator);
+//        viewGroup.getLayoutTransition()
+//                .setAnimator(LayoutTransition.DISAPPEARING, removeAnimator);
+//
+
     }
 }

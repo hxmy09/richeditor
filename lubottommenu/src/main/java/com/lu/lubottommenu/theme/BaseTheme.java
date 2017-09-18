@@ -34,8 +34,7 @@ public class BaseTheme extends AbstractTheme{
 
     @Override
     public int[] getBackGroundColors() {
-        return new int[] {
-            Color.WHITE};
+        return new int[] {};
     }
 
     @Override

@@ -11,6 +11,10 @@ import com.lu.lubottommenu.api.ITheme;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractTheme implements ITheme{
+    public static final int LIGHT_THEME = 0x01;
+    public static final int DARK_THEME = 0x02;
+
+
     @Override
     public abstract int[] getBackGroundColors() ;
 

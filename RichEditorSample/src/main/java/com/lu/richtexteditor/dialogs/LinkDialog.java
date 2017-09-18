@@ -2,7 +2,7 @@ package com.lu.richtexteditor.dialogs;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.BaseDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +19,7 @@ import static com.lu.richtexteditor.R.id.cancel_btn;
  * Created by 陆正威 on 2017/9/11.
  */
 
-public class LinkDialog extends DialogFragment {
+public class LinkDialog extends BaseDialogFragment {
     public static final String Tag = "link_dialog_fragment";
 
     private OnDialogClickListener listener;

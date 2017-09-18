@@ -116,9 +116,8 @@ public abstract class RichEditor extends WebView {
         setHorizontalScrollBarEnabled(false);
         setWebViewClient(createWebViewClient());
         mContentLength = 0;
-        loadUrl(SETUP_HTML);
         getSettings().setJavaScriptEnabled(true);
-
+        load();
         applyAttributes(context, attrs);
     }
 
@@ -262,6 +261,9 @@ public abstract class RichEditor extends WebView {
         return mContents;
     }
 
+    public void load(){
+        loadUrl(SETUP_HTML);
+    }
 
     @Override
     public void setPadding(int left, int top, int right, int bottom) {

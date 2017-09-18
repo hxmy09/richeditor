@@ -1,4 +1,4 @@
-package com.lu.richtexteditor;
+package com.lu.richtexteditor.bean;
 
 import java.util.List;
 

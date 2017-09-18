@@ -49,7 +49,12 @@ public class BottomMenuItemWrapper extends AbstractBottomMenuItem {
 
     @Override
     public void settingAfterCreate(boolean isSelected, View view) {
+        actualItem.settingAfterCreate(isSelected, view);
+    }
 
+    @Override
+    public void onDisplayPrepare() {
+        actualItem.onDisplayPrepare();
     }
 
     @Override
