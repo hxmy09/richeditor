@@ -135,6 +135,7 @@ public class LuBottomMenu extends ViewGroup {
         if (isFirstMeasure) {
             removeUselessViews();
             isFirstMeasure = false;
+            AnimatorUtil.setTransition(this,width,height);
             return;
         }
 
@@ -489,6 +490,7 @@ public class LuBottomMenu extends ViewGroup {
      * 根据背景色绘制Menu顶部的分割线
      */
     private void drawLine(Canvas canvas) {
+        if(getLayoutTransition() != null && getLayoutTransition().isRunning())   return;
         mPaint.setColor(Utils.getDarkerColor(getColorByDeep(mDisplayRowNum), 0.1f));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             canvas.drawLine(getPaddingStart(), getPaddingTop(), getWidth() - getPaddingEnd(), getPaddingTop(), mPaint);

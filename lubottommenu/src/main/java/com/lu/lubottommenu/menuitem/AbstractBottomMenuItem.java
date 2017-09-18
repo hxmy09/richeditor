@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.text.method.HideReturnsTransformationMethod;
 import android.view.View;
 
 import com.lu.lubottommenu.api.IBottomMenuItem;
@@ -36,8 +37,9 @@ public abstract class AbstractBottomMenuItem<T extends View> implements IBottomM
     /**
      * 这个函数在视图被添加进父菜单行是执行
      * 对内部View进行创建和设置
+     * @hide
      */
-    public final void onDisplayPrepare(){
+    public void onDisplayPrepare(){
         View v = mMenuItem.getContentView();
 
         if(v == null)
