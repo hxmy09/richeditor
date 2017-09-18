@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.BaseDialogFragment;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -15,7 +16,7 @@ import com.lu.richtexteditor.R;
  * Created by 陆正威 on 2017/9/12.
  */
 
-public class PictureHandleDialog extends DialogFragment {
+public class PictureHandleDialog extends BaseDialogFragment {
     public static final String Tag = "delete_dialog_fragment";
     private Long imageId;
     private CharSequence[] items;

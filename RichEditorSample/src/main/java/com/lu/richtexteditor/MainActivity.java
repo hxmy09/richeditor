@@ -25,6 +25,7 @@ import com.lu.lubottommenu.logiclist.MenuItemFactory;
 import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
 import com.lu.lubottommenu.theme.DarkTheme;
 import com.lu.lubottommenu.theme.LightTheme;
+import com.lu.richtexteditor.bean.Response;
 import com.lu.richtexteditor.dialogs.LinkDialog;
 import com.lu.richtexteditor.dialogs.PictureHandleDialog;
 import com.lu.richtexteditorlib.SimpleRichEditor;
@@ -59,9 +60,30 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mInsertedImages = new HashMap<>();
-        mFailedImages = new HashMap<>();
-        initView();
+        if (savedInstanceState != null) {
+            initView();
+            mInsertedImages = new HashMap<>();
+            mFailedImages = new HashMap<>();
+            mRichTextView.restoreState(savedInstanceState);
+        }
+        else {
+            mInsertedImages = new HashMap<>();
+            mFailedImages = new HashMap<>();
+            initView();
+            mRichTextView.load();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mRichTextView.saveState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mRichTextView.restoreState(savedInstanceState);
     }
 
     @Override
@@ -105,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
                     public void onCompleted(String filePath, ResponseBody responseBody) {
                         try {
                             Response response = new GsonBuilder().create().fromJson(responseBody.string(), Response.class);
-                            //Log.e("onCompleted", response.getData().get(0));
 
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -125,6 +146,9 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
     private void initView() {
         mLuBottomMenu = (LuBottomMenu) findViewById(R.id.lu_bottom_menu);
         mRichTextView = (SimpleRichEditor) findViewById(R.id.rich_text_view);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mButton = (Button) findViewById(R.id.button);
+
         mRichTextView.setOnEditorClickListener(this);
         mRichTextView.setOnTextLengthChangeListener(new RichEditor.OnTextLengthChangeListener() {
             @Override
@@ -132,29 +156,26 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
                 mToolbar.post(new Runnable() {
                     @Override
                     public void run() {
-                        mToolbar.setTitle(length+getString(R.string.char_unit));
+                        mToolbar.setTitle(length + getString(R.string.char_unit));
                     }
                 });
             }
         });
         mRichTextView.setLuBottomMenu(mLuBottomMenu);
 
-        ImageViewButtonItem themeItem = MenuItemFactory.generateImageItem(this, R.drawable.theme,false);
+        ImageViewButtonItem themeItem = MenuItemFactory.generateImageItem(this, R.drawable.theme, false);
         themeItem.setOnItemClickListener(new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
             @Override
             public boolean onItemClick(MenuItem item, boolean isSelected) {
-                if(!isSelected)
-                    mLuBottomMenu.setTheme(new DarkTheme());
+                if (!isSelected)
+                    mRichTextView.setTheme(new DarkTheme());
                 else
-                    mLuBottomMenu.setTheme(new LightTheme());
+                    mRichTextView.setTheme(new LightTheme());
                 return false;
             }
         });
 
-        mRichTextView.addRootCustomItem(0x10,themeItem);
-
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mButton = (Button) findViewById(R.id.button);
+        mRichTextView.addRootCustomItem(0x10, themeItem);
         mButton.setOnClickListener(this);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
             }
         });
         initImagePicker();
-
     }
 
     private void initImagePicker() {
@@ -205,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
         dialog.show(getSupportFragmentManager(), LinkDialog.Tag);
     }
 
-    private void showPictureClickDialog(final PictureHandleDialog dialog,CharSequence[] items) {
+    private void showPictureClickDialog(final PictureHandleDialog dialog, CharSequence[] items) {
         dialog.setListener(new PictureHandleDialog.OnDialogClickListener() {
             @Override
             public void onDeleteButtonClick(Long id) {
@@ -255,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
     @Override
     public void onImageClick(Long id) {
         if (mInsertedImages.containsKey(id))
-            showPictureClickDialog(PictureHandleDialog.createDeleteDialog(id),new CharSequence[]{getString(R.string.delete)});
+            showPictureClickDialog(PictureHandleDialog.createDeleteDialog(id), new CharSequence[]{getString(R.string.delete)});
         else if (mFailedImages.containsKey(id)) {
             showPictureClickDialog(PictureHandleDialog.createDeleteDialog(id),
                     new CharSequence[]{getString(R.string.delete), getString(R.string.retry)});

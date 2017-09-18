@@ -9,6 +9,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -46,7 +47,7 @@ public class LuBottomMenu extends ViewGroup {
     private static int INNER_LAYOUT_PADDING_B = 0;
     private static float INNER_ITEM_PADDING_RATE = 0.44f;//内部图标内边距充填0.56
 
-    private static int[] COLOR_SET;
+    private int[] colorSet;
 
     private MenuItemTree mMenuTree;
     private HashMap<Long, AbstractBottomMenuItem> mBottomMenuItems;
@@ -132,7 +133,7 @@ public class LuBottomMenu extends ViewGroup {
 
         //如果是第一次测测量移除无用的view ，不对子view进行测量
         if (isFirstMeasure) {
-            removeUnUselessViews();
+            removeUselessViews();
             isFirstMeasure = false;
             return;
         }
@@ -189,8 +190,8 @@ public class LuBottomMenu extends ViewGroup {
         if (state != null) {
             SaveState ss = (SaveState) state;
             super.onRestoreInstanceState(ss.getSuperState());
-            mMenuTree = ss.menuItemTree;//恢复逻辑树
-            mBottomMenuItems = ss.bottomMenuItems;
+            mTheme = ss.theme;
+            colorSet = mTheme.getBackGroundColors();
             restoreAllInfo(ss.pathRecord);//根据路径信息恢复其他信息
         }
     }
@@ -200,8 +201,7 @@ public class LuBottomMenu extends ViewGroup {
         Parcelable superState = super.onSaveInstanceState();
         SaveState ss = new SaveState(superState);
         ss.pathRecord = mPathRecord;
-        ss.menuItemTree = mMenuTree;
-        ss.bottomMenuItems = mBottomMenuItems;
+        ss.theme = mTheme;
         return ss;
     }
 
@@ -213,12 +213,13 @@ public class LuBottomMenu extends ViewGroup {
                 entrySet) {
             e.getValue().onViewDestroy();
         }
+        removeAllLevels(mDisplayRowNum);
     }
 
     /**
      * 在 init()之后调用
      */
-    private void removeUnUselessViews() {
+    private void removeUselessViews() {
         final int childCount = getChildCount();
         if (childCount > mDisplayMenus.size()) {
             for (int i = 0; i < childCount; i++) {
@@ -268,8 +269,9 @@ public class LuBottomMenu extends ViewGroup {
                     addOneLevel();
                 } else {
                     removeAllLevels(Math.max(0, mDisplayRowNum - mCurMenuItem.getDeep()));
-                    if (!isOldItemElder)
+                    if (!isOldItemElder) {
                         addOneLevel();
+                    }
                     else
                         mCurMenuItem = mCurMenuItem.getParent();
                 }
@@ -292,7 +294,6 @@ public class LuBottomMenu extends ViewGroup {
      * 增加一行菜单当未超过最大限制并且不是逻辑树中的叶子节点时
      */
     private void addOneLevel() {
-        //Log.e("addOneLevel", mSingleRowHeight + "");
         if (mCurMenuItem == null || mCurMenuItem.isLeafNode() || mCurMenuItem.getDeep() >= MAX_LEVELS - 1)
             return;
         LinearLayout linearLayout = new LinearLayout(getContext());
@@ -465,11 +466,13 @@ public class LuBottomMenu extends ViewGroup {
      * 通过路径直接恢复视图序列
      */
     private void restoreAllInfo(ArrayDeque<MenuItem> pathRecord) {
+        mPathRecord.clear();
         while (!pathRecord.isEmpty()) {
             mCurMenuItem = pathRecord.getLast();
             addOneLevel();
             pathRecord.removeLast();
         }
+
     }
 
 
@@ -478,7 +481,7 @@ public class LuBottomMenu extends ViewGroup {
      * @return  在颜色列表中对应的颜色
      */
     private int getColorByDeep(int deep) {
-        return COLOR_SET[deep % COLOR_SET.length];
+        return colorSet[deep % colorSet.length];
     }
 
     /**
@@ -496,7 +499,7 @@ public class LuBottomMenu extends ViewGroup {
 
     private ITheme createDefaultTheme(){
         mTheme = new LightTheme();
-        COLOR_SET = mTheme.getBackGroundColors();
+        colorSet = mTheme.getBackGroundColors();
         return mTheme;
     }
 
@@ -505,10 +508,9 @@ public class LuBottomMenu extends ViewGroup {
         return new MarginLayoutParams(p);
     }
 
-    public static class SaveState extends BaseSavedState implements Parcelable {
+    public static class SaveState extends BaseSavedState{
         ArrayDeque<MenuItem> pathRecord;
-        MenuItemTree menuItemTree;
-        HashMap<Long, AbstractBottomMenuItem> bottomMenuItems;
+        ITheme theme;
 
         public SaveState(Parcelable superState) {
             super(superState);
@@ -522,15 +524,13 @@ public class LuBottomMenu extends ViewGroup {
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeSerializable(this.pathRecord);
-            dest.writeParcelable(this.menuItemTree, flags);
-            dest.writeMap(this.bottomMenuItems);
+            dest.writeParcelable(this.theme, flags);
         }
 
         protected SaveState(Parcel in) {
             super(in);
             this.pathRecord = (ArrayDeque<MenuItem>) in.readSerializable();
-            this.menuItemTree = in.readParcelable(MenuItemTree.class.getClassLoader());
-            this.bottomMenuItems = in.readHashMap(HashMap.class.getClassLoader());
+            this.theme = in.readParcelable(ITheme.class.getClassLoader());
         }
 
         public static final Creator<SaveState> CREATOR = new Creator<SaveState>() {
@@ -571,7 +571,6 @@ public class LuBottomMenu extends ViewGroup {
         Set<Map.Entry<Long, AbstractBottomMenuItem>> entrySet = mBottomMenuItems.entrySet();
         for (Map.Entry<Long, AbstractBottomMenuItem> e :
                 entrySet) {
-            //Log.e("setEnabled",enabled+""+e.getValue().getItemId());
             if (e.getValue().getMainView() != null)
                 e.getValue().getMainView().setEnabled(enabled);
         }
@@ -624,14 +623,11 @@ public class LuBottomMenu extends ViewGroup {
     }
 
     public void setMenuBackGroundColor(int... colors) {
-        COLOR_SET = colors;
-
+        colorSet = colors;
         if (!isFirstMeasure) {
-            int i = 0;
-            for (LinearLayout l :
-                    mDisplayMenus) {
-                l.setBackgroundColor(getColorByDeep(i));
-                i++;
+            final int childrenCount = getChildCount();
+            for(int i = 0;i<childrenCount;i++){
+                getChildAt(i).setBackgroundColor(getColorByDeep(i));
             }
             invalidate();
         }
@@ -639,7 +635,7 @@ public class LuBottomMenu extends ViewGroup {
 
     public void setTheme(ITheme theme){
         mTheme = theme;
-        COLOR_SET = theme.getBackGroundColors();
+        colorSet = theme.getBackGroundColors();
 
         if(mDisplayMenus != null && !mDisplayMenus.isEmpty()){
             Set<Map.Entry<Long,AbstractBottomMenuItem>> entries = mBottomMenuItems.entrySet();
@@ -651,11 +647,7 @@ public class LuBottomMenu extends ViewGroup {
 
         int i = 0;
         if(mDisplayMenus != null)
-        for (LinearLayout ll :
-                mDisplayMenus) {
-            ll.setBackgroundColor(getColorByDeep(i++));
-        }
-        invalidate();
+            setMenuBackGroundColor(colorSet);
     }
 
     public LuBottomMenu addRootItem(AbstractBottomMenuItem bottomMenuItem) {

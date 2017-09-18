@@ -2,13 +2,11 @@ package com.lu.lubottommenu.menuitem;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
