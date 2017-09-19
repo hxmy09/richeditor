@@ -23,6 +23,7 @@ import com.lu.lubottommenu.LuBottomMenu;
 import com.lu.lubottommenu.logiclist.MenuItem;
 import com.lu.lubottommenu.logiclist.MenuItemFactory;
 import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
+import com.lu.lubottommenu.theme.BaseTheme;
 import com.lu.lubottommenu.theme.DarkTheme;
 import com.lu.lubottommenu.theme.LightTheme;
 import com.lu.richtexteditor.bean.Response;
@@ -167,10 +168,22 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
         themeItem.setOnItemClickListener(new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
             @Override
             public boolean onItemClick(MenuItem item, boolean isSelected) {
-                if (!isSelected)
-                    mRichTextView.setTheme(new DarkTheme());
-                else
-                    mRichTextView.setTheme(new LightTheme());
+                if (!isSelected) {
+                    BaseTheme theme = new DarkTheme();
+                    mRichTextView.setTheme(theme);
+                    mToolbar.setBackgroundColor(theme.getBackGroundColors()[0]);
+                    mButton.setTextColor(theme.getAccentColor());
+                    mToolbar.setTitleTextColor(theme.getNormalColor());
+                    mToolbar.setNavigationIcon(R.drawable.left_arrow_white);
+                }
+                else {
+                    BaseTheme theme = new LightTheme();
+                    mRichTextView.setTheme(theme);
+                    mToolbar.setBackgroundColor(theme.getBackGroundColors()[0]);
+                    mButton.setTextColor(theme.getAccentColor());
+                    mToolbar.setTitleTextColor(theme.getAccentColor());
+                    mToolbar.setNavigationIcon(R.drawable.left_arrow_black);
+                }
                 return false;
             }
         });

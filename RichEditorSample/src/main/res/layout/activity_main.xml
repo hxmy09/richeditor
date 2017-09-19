@@ -6,19 +6,21 @@
     android:layout_height="wrap_content"
     tools:context="com.lu.richtexteditor.MainActivity">
 
-
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="54dp"
-        android:background="@color/white"
-        app:navigationIcon="@drawable/left_arrow"
-        app:title="0字"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-    </android.support.v7.widget.Toolbar>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/white"
+        android:elevation="1dp"
+        app:navigationIcon="@drawable/left_arrow_black"
+        app:subtitleTextAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:title="0字"
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
+        app:titleTextColor="@color/black" />
+
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/button"
@@ -29,8 +31,10 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:text="发 表"
-        android:textSize="16sp" />
+        android:text="@string/publish"
+        android:textSize="16sp"
+        android:elevation="1dp"
+        />
 
     <com.lu.richtexteditorlib.SimpleRichEditor
         android:id="@+id/rich_text_view"
@@ -46,7 +50,6 @@
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:layout_alignParentBottom="true">
-
     </com.lu.lubottommenu.LuBottomMenu>
 
 </RelativeLayout>

@@ -491,7 +491,8 @@ public class LuBottomMenu extends ViewGroup {
      */
     private void drawLine(Canvas canvas) {
         if(getLayoutTransition() != null && getLayoutTransition().isRunning())   return;
-        mPaint.setColor(Utils.getDarkerColor(getColorByDeep(mDisplayRowNum), 0.1f));
+        mPaint.setColor(Utils.getDarkerColor(getColorByDeep(mDisplayRowNum), 0.2f));
+        mPaint.setAlpha(80);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             canvas.drawLine(getPaddingStart(), getPaddingTop(), getWidth() - getPaddingEnd(), getPaddingTop(), mPaint);
         } else {
