@@ -4,7 +4,7 @@
 
 ### 主题
 
-![dark-image](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/lighttheme.jpg  =100)![light-image](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/lighttheme.jpg)
+<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/lighttheme.jpg" width="50%" height="50%"/>![light-image](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/lighttheme.jpg)
 
 ### 图片功能块
 
