@@ -4,7 +4,7 @@
 
 ### 主题
 
-<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/darkimage.jpg" width="50%"/><img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/darkimage.jpg" width="50%"/>
+<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/darkimage.jpg" width="40%"/>   <img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/darkimage.jpg" width="40%"/>
 ### 图片功能块
 
 ![process](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/loadingimage.jpg)![del-image1](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/deleteImage.jpg)![del-image2](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/deleteimage1.jpg)
