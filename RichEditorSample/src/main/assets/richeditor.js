@@ -147,6 +147,7 @@ var RE = {
 		} else {
 			var value = '<' + command + '>';
 			document.execCommand('formatBlock', false, value);
+			_self.getEditItem({});
 		}
 	},
 	getEditItem: function getEditItem(evt) {
