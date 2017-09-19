@@ -1,6 +1,14 @@
 # richeditor
 
 ## 轻量级仿简书风格的富文本编辑器
+
+### 主题
+
+<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/darkimage.jpg" width="30%"/>   <img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/lighttheme.jpg" width="30%"/>
+### 图片功能块
+
+<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/richimage.jpg" width="30%" />  <img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/loadingimage.jpg" width="30%"/> <img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/reloadimage.jpg" width="30%" /> <img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/deleteImage.jpg" width="30%" /> <img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/deleteimage1.jpg" width="30%" /> 
+
 ### 目标
 - 移除移动端不太适用的编辑功能
 - 保证性能的稳定性
@@ -36,7 +44,7 @@
 <br/>
 
 ## 演示示例
-![Example1](https://github.com/nowandfurure/richedtor/blob/master/sample1.gif)
-![Example1](https://github.com/nowandfurure/richedtor/blob/master/sample3.gif)
+<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/richeditor2.gif" />
+<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/richeditor1.gif" />
 
 
