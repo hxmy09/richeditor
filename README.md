@@ -44,7 +44,7 @@
 <br/>
 
 ## 演示示例
-![Example1](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/richeditor2.gif)
-![Example1](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/richeditor1.gif)
+<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/richeditor2.gif" />
+<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/richeditor1.gif" />
 
 
