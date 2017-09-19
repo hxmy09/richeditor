@@ -635,6 +635,9 @@ public class LuBottomMenu extends ViewGroup {
         }
     }
 
+    /**
+     * @param theme 主题色：custom theme
+     */
     public void setTheme(ITheme theme){
         mTheme = theme;
         colorSet = theme.getBackGroundColors();

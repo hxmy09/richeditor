@@ -58,5 +58,6 @@ freeline.py
 freeline/
 freeline_project_description.json
 javascriptSource/node_modules/
-/.idea/libraries/
 /.idea/modules.xml
+
+

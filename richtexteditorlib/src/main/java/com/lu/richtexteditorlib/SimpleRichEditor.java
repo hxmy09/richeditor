@@ -260,14 +260,34 @@ public class SimpleRichEditor extends RichEditor {
         }
     }
 
-    public void setTheme(ITheme theme){
+    public void setTheme(final ITheme theme){
         mLuBottomMenu.setTheme(theme);
-        String backgroundColor = Utils.converInt2HexColor(theme.getBackGroundColors()[0]);
-        String fontColor = Utils.converInt2HexColor(theme.getNormalColor());
-        int color = ColorUtils.blendARGB(theme.getNormalColor(),theme.getBackGroundColors()[0],0.5f);
 
-        exec("javascript:RE.setBackgroundColor('"+backgroundColor+"');" );
-        exec("javascript:RE.setFontColor('"+fontColor+"');");
+        post(new Runnable() {
+            @Override
+            public void run() {
+                String backgroundColor = Utils.converInt2HexColor(theme.getBackGroundColors()[0]);
+                //从高亮色和基础色中找出和背景明度差异大的作为字体颜色
+                double backgroundLum = ColorUtils.calculateLuminance(theme.getBackGroundColors()[0]);
+                double normalLum =  ColorUtils.calculateLuminance(theme.getNormalColor());
+                double accentLum =  ColorUtils.calculateLuminance(theme.getAccentColor());
+
+                int fontColorInt;
+                if(Math.abs(normalLum - backgroundLum) > Math.abs(accentLum - backgroundLum))
+                    fontColorInt = theme.getNormalColor();
+                else
+                    fontColorInt = theme.getAccentColor();
+
+                String fontColor = Utils.converInt2HexColor(fontColorInt);
+                //找出背景色和字体色的中间色作为引用块底色
+                //unused
+                int color = ColorUtils.blendARGB(fontColorInt,theme.getBackGroundColors()[0],0.5f);
+
+                exec("javascript:RE.setBackgroundColor('"+backgroundColor+"');" );
+                exec("javascript:RE.setFontColor('"+fontColor+"');");
+            }
+        });
+
         //do something
     }
 
