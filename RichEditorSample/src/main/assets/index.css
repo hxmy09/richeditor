@@ -19,8 +19,9 @@ p {
   font-size: 24px;
   border: none;
   outline: none;
-  background-color:transparent;
+  background-color: transparent;
   color: inherit;
+  border-color: inherit;
 }
 .content .line {
   border: 1px dashed #969696;

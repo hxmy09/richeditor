@@ -187,8 +187,7 @@ var RE = {
 	    document.body.style.backgroundColor = color;
 	},
 	setFontColor: function setFontColor(color) {
-	    var _self = this;
-	    _self.cache.editor.style.color = color;
+        document.body.style.color = color;
 	},
 	setLineColor: function setLineColor(color) {
 	    var _self = this;
