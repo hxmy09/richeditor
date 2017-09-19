@@ -1,6 +1,16 @@
 # richeditor
 
 ## 轻量级仿简书风格的富文本编辑器
+
+### 主题
+
+![dark-image](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/lighttheme.jpg)![light-image](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/lighttheme.jpg)
+
+### 图片功能块
+
+![process](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/loadingimage.jpg)![del-image1](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/deleteImage.jpg)![del-image2](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/deleteimage1.jpg)
+![error-image](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/reloadimage.jpg)
+
 ### 目标
 - 移除移动端不太适用的编辑功能
 - 保证性能的稳定性
