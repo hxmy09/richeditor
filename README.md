@@ -4,11 +4,10 @@
 
 ### 主题
 
-<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/darkimage.jpg" width="40%"/>   <img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/darkimage.jpg" width="40%"/>
+<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/darkimage.jpg" width="30%"/>   <img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/lighttheme.jpg" width="30%"/>
 ### 图片功能块
 
-![process](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/loadingimage.jpg)![del-image1](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/deleteImage.jpg)![del-image2](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/deleteimage1.jpg)
-![error-image](http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/reloadimage.jpg)
+<img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/loadingimage.jpg" width="30%"/>  <img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/deleteImage.jpg" width="30%" /> <img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/deleteimage1.jpg" width="30%" />  <img src="http://lhbzimo.oss-cn-shenzhen.aliyuncs.com/reloadimage.jpg" width="30%" />
 
 ### 目标
 - 移除移动端不太适用的编辑功能
