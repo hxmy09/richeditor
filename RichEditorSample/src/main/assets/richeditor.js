@@ -33,6 +33,7 @@ var RE = {
 		_self.initCache();
 		_self.initSetting();
 		_self.bind();
+		_self.focus();
 	},
 	bind: function bind() {
 		var _self = this;

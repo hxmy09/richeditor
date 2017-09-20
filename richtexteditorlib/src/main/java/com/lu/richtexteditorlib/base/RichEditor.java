@@ -115,10 +115,11 @@ public abstract class RichEditor extends WebView {
         setVerticalScrollBarEnabled(false);
         setHorizontalScrollBarEnabled(false);
         setWebViewClient(createWebViewClient());
+        setWebChromeClient(new WebChromeClient());
         mContentLength = 0;
         getSettings().setJavaScriptEnabled(true);
         load();
-        applyAttributes(context, attrs);
+        //applyAttributes(context, attrs);
     }
 
     protected EditorWebViewClient createWebViewClient() {
@@ -217,42 +218,6 @@ public abstract class RichEditor extends WebView {
         }
     }
 
-    @SuppressLint("RtlHardcoded")
-    private void applyAttributes(Context context, AttributeSet attrs) {
-        final int[] attrsArray = new int[]{
-                android.R.attr.gravity
-        };
-        TypedArray ta = context.obtainStyledAttributes(attrs, attrsArray);
-
-        int gravity = ta.getInt(0, NO_ID);
-        switch (gravity) {
-            case Gravity.LEFT:
-                exec("javascript:RE.setTextAlign(\"left\")");
-                break;
-            case Gravity.RIGHT:
-                exec("javascript:RE.setTextAlign(\"right\")");
-                break;
-            case Gravity.TOP:
-                exec("javascript:RE.setVerticalAlign(\"top\")");
-                break;
-            case Gravity.BOTTOM:
-                exec("javascript:RE.setVerticalAlign(\"bottom\")");
-                break;
-            case Gravity.CENTER_VERTICAL:
-                exec("javascript:RE.setVerticalAlign(\"middle\")");
-                break;
-            case Gravity.CENTER_HORIZONTAL:
-                exec("javascript:RE.setTextAlign(\"center\")");
-                break;
-            case Gravity.CENTER:
-                exec("javascript:RE.setVerticalAlign(\"middle\")");
-                exec("javascript:RE.setTextAlign(\"center\")");
-                break;
-        }
-
-        ta.recycle();
-    }
-
     public void getHtmlAsyn() {
         exec("javascript:RE.getHtml4Android()");
     }
@@ -262,7 +227,10 @@ public abstract class RichEditor extends WebView {
     }
 
     public void load(){
+        Log.e("load","before load");
         loadUrl(SETUP_HTML);
+        Log.e("load","after load");
+
     }
 
     @Override
@@ -391,15 +359,10 @@ public abstract class RichEditor extends WebView {
 
     public void focusEditor() {
         requestFocus();
-        exec("javascript:RE.focus();");
     }
 
     public void clearFocusEditor() {
         exec("javascript:RE.blurFocus();");
-    }
-
-    private String convertHexColorString(int color) {
-        return String.format("#%06X", (0xFFFFFF & color));
     }
 
     protected void exec(final String trigger) {
@@ -439,6 +402,8 @@ public abstract class RichEditor extends WebView {
         @Override
         public void onPageFinished(WebView view, String url) {
             isReady = url.equalsIgnoreCase(SETUP_HTML);
+            Log.e("load","after onPageFinished");
+
             if (mLoadListener != null) {
                 mLoadListener.onAfterInitialLoad(isReady);
             }
