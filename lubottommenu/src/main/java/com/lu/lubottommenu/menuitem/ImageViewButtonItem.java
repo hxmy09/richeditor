@@ -21,13 +21,9 @@ import com.lu.lubottommenu.logiclist.MenuItem;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ImageViewButtonItem extends AbstractBottomMenuItem<ImageButton> implements Parcelable {
 
-    public interface OnImageViewButtonItemClickListener{
-        boolean onItemClick(MenuItem item,boolean isSelected);
-    }
-
     private int idRes;
     private boolean enableAutoSet = true;//点击后根据是否选中自动设置显示的效果
-    private OnImageViewButtonItemClickListener mOnItemClickListener;
+    private OnBottomItemClickListener mOnItemClickListener;
 
     public ImageViewButtonItem(Context context, MenuItem menuItem, int idRes) {
         this(context, menuItem, idRes, true);
@@ -118,7 +114,7 @@ public class ImageViewButtonItem extends AbstractBottomMenuItem<ImageButton> imp
         this.enableAutoSet = enableAutoSet;
     }
 
-    public void setOnItemClickListener(OnImageViewButtonItemClickListener mOnItemClickListener) {
+    public void setOnItemClickListener(OnBottomItemClickListener mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
     }
 

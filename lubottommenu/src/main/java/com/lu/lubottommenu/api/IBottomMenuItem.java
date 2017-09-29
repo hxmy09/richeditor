@@ -24,4 +24,8 @@ public interface IBottomMenuItem {
         void writeToParcel(Parcel dest, int flags);
     }
 
+    interface OnBottomItemClickListener{
+        boolean onItemClick(MenuItem item,boolean isSelected);
+    }
+
 }

@@ -3,6 +3,7 @@ package com.lu.richtexteditorlib.factories;
 import android.content.Context;
 import android.support.annotation.DrawableRes;
 
+import com.lu.lubottommenu.api.IBottomMenuItem;
 import com.lu.lubottommenu.logiclist.MenuItemFactory;
 import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
 import com.lu.richtexteditorlib.R;
@@ -24,110 +25,114 @@ import com.lu.richtexteditorlib.constant.ItemIndex;
  * public static final long H4 = 0x0d;
  * public static final long HALVING_LINE = 0x0e;
  * public static final long LINK = 0x0f;
+ *
+ * for custom the default factory ,to replace the DrawRes ,you can override the "protected" function
+ * or try to make a non-ImageViewButton item by write the subclass of the BaseItemFactory and set the factory in
+ * the richtexteditor
  * Created by 陆正威 on 2017/9/15.
  */
 
-public class DefaultItemFactory {
-    private static ImageViewButtonItem generateItem(Context context, long itemIndex, @DrawableRes int id) {
+public class DefaultItemFactory extends BaseItemFactory<ImageViewButtonItem>{
+
+    private ImageViewButtonItem generateItem(Context context, long itemIndex, @DrawableRes int id) {
         return MenuItemFactory.generateImageItem(context, itemIndex, id, false);
     }
 
-    private static ImageViewButtonItem generateAutoSetItem(Context context, long itemIndex, @DrawableRes int id) {
+    private ImageViewButtonItem generateAutoSetItem(Context context, long itemIndex, @DrawableRes int id) {
         return MenuItemFactory.generateImageItem(context, itemIndex, id, true);
     }
 
-    public static ImageViewButtonItem generateInsertImageItem(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected  ImageViewButtonItem generateInsertImageItem(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateItem(context, ItemIndex.INSERT_IMAGE, R.drawable.insert_image);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateAItem(Context context) {
+    protected  ImageViewButtonItem generateAItem(Context context) {
         return generateAutoSetItem(context, ItemIndex.A, R.drawable.a);
     }
 
-    public static ImageViewButtonItem generateMoreItem(Context context) {
+    protected  ImageViewButtonItem generateMoreItem(Context context) {
         return generateAutoSetItem(context, ItemIndex.MORE, R.drawable.more);
     }
 
-    public static ImageViewButtonItem generateUndoItem(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected  ImageViewButtonItem generateUndoItem(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateItem(context, ItemIndex.UNDO, R.drawable.undo);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateRedoItem(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected  ImageViewButtonItem generateRedoItem(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateItem(context, ItemIndex.REDO, R.drawable.redo);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateBoldItem(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected  ImageViewButtonItem generateBoldItem(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateAutoSetItem(context, ItemIndex.BOLD, R.drawable.bold);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateItalicItem(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected  ImageViewButtonItem generateItalicItem(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateAutoSetItem(context, ItemIndex.ITALIC, R.drawable.italic);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateStrikeThroughItem(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected  ImageViewButtonItem generateStrikeThroughItem(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateAutoSetItem(context, ItemIndex.STRIKE_THROUGH, R.drawable.strikethrough);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateBlockQuoteItem(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected  ImageViewButtonItem generateBlockQuoteItem(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateAutoSetItem(context, ItemIndex.BLOCK_QUOTE, R.drawable.blockquote);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateH1Item(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected  ImageViewButtonItem generateH1Item(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateAutoSetItem(context, ItemIndex.H1, R.drawable.h1);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateH2Item(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected  ImageViewButtonItem generateH2Item(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateAutoSetItem(context, ItemIndex.H2, R.drawable.h2);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateH3Item(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected  ImageViewButtonItem generateH3Item(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateAutoSetItem(context, ItemIndex.H3, R.drawable.h3);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateH4Item(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected  ImageViewButtonItem generateH4Item(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateAutoSetItem(context, ItemIndex.H4, R.drawable.h4);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateHalvingLineItem(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected   ImageViewButtonItem generateHalvingLineItem(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateItem(context, ItemIndex.HALVING_LINE, R.drawable.halving_line);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateLinkItem(Context context, ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    protected   ImageViewButtonItem generateLinkItem(Context context, IBottomMenuItem.OnBottomItemClickListener listener) {
         ImageViewButtonItem item = generateItem(context, ItemIndex.LINK, R.drawable.link);
         item.setOnItemClickListener(listener);
         return item;
     }
 
-    public static ImageViewButtonItem generateDefaultItem(Context context,Long id,ImageViewButtonItem.OnImageViewButtonItemClickListener listener) {
+    @Override
+    public  ImageViewButtonItem generateItem(Context context,Long id,IBottomMenuItem.OnBottomItemClickListener listener) {
         switch (id.intValue()){
             case (int) ItemIndex.BOLD:
                 return generateBoldItem(context, listener);
-            case (int) ItemIndex.A:
-                return generateAItem(context);
             case (int) ItemIndex.ITALIC:
                 return generateItalicItem(context, listener);
             case (int) ItemIndex.STRIKE_THROUGH:
@@ -146,9 +151,26 @@ public class DefaultItemFactory {
                 return generateHalvingLineItem(context,listener);
             case (int) ItemIndex.LINK:
                 return generateLinkItem(context, listener);
+            case (int) ItemIndex.REDO:
+                return generateRedoItem(context,listener);
+            case (int) ItemIndex.UNDO:
+                return generateUndoItem(context,listener);
+            case (int) ItemIndex.INSERT_IMAGE:
+                return generateInsertImageItem(context,listener);
             default:
                 return null;
         }
     }
 
+    @Override
+    public ImageViewButtonItem generateItem(Context context, Long id) {
+        switch (id.intValue()){
+            case (int) ItemIndex.A:
+                return generateAItem(context);
+            case (int) ItemIndex.MORE:
+                return generateMoreItem(context);
+            default:
+                return null;
+        }
+    }
 }

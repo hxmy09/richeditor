@@ -28,7 +28,8 @@ public class ItemIndex {
     public static final long H4 = 0x0d;
     public static final long HALVING_LINE = 0x0e;
     public static final long LINK = 0x0f;
-    private long[] defaultItems ={INSERT_IMAGE,A,MORE,UNDO,REDO,BLOCK_QUOTE,BOLD,ITALIC,STRIKE_THROUGH,H1,H2,H3,H4,HALVING_LINE,LINK};
+    private long[] defaultItems ={INSERT_IMAGE,A,MORE,UNDO,
+            REDO,BLOCK_QUOTE,BOLD,ITALIC,STRIKE_THROUGH,H1,H2,H3,H4,HALVING_LINE,LINK};
 
     private ArraySet<Long> registerSet = new ArraySet<>();
     private final static ItemIndex instance = new ItemIndex();

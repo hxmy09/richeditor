@@ -8,15 +8,16 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.lu.lubottommenu.LuBottomMenu;
+import com.lu.lubottommenu.api.IBottomMenuItem;
 import com.lu.lubottommenu.api.ITheme;
 import com.lu.lubottommenu.logiclist.MenuItem;
 import com.lu.lubottommenu.menuitem.AbstractBottomMenuItem;
-import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
 import com.lu.lubottommenu.theme.AbstractTheme;
 import com.lu.lubottommenu.theme.DarkTheme;
 import com.lu.lubottommenu.theme.LightTheme;
 import com.lu.richtexteditorlib.base.RichEditor;
 import com.lu.richtexteditorlib.constant.ItemIndex;
+import com.lu.richtexteditorlib.factories.BaseItemFactory;
 import com.lu.richtexteditorlib.factories.DefaultItemFactory;
 import com.lu.richtexteditorlib.utils.SelectController;
 import com.lu.richtexteditorlib.utils.Utils;
@@ -35,6 +36,23 @@ public class SimpleRichEditor extends RichEditor {
     @SuppressWarnings("unused")
     public void setOnStateChangeListener(OnStateChangeListener mOnStateChangeListener) {
         this.mOnStateChangeListener = mOnStateChangeListener;
+    }
+
+    public <T extends AbstractBottomMenuItem> BaseItemFactory<T> getBaseItemFactory() {
+        return mBaseItemFactory == null ? createDefaultFactory() : mBaseItemFactory;
+    }
+
+    private DefaultItemFactory createDefaultFactory(){
+        return new DefaultItemFactory();
+    }
+
+
+    /**
+     * @param baseItemFactory the bottomItem factory that will override the default factory
+     * 设置新的工厂方法生产自定义的底栏 Item 项
+     */
+    public void setBaseItemFactory(BaseItemFactory baseItemFactory) {
+        this.mBaseItemFactory = baseItemFactory;
     }
 
 
@@ -77,6 +95,7 @@ public class SimpleRichEditor extends RichEditor {
     private ArrayList<Long> mFreeItems;//不受其他items点击事件影响的items
     private ItemIndex.Register mRegister;
     private OnStateChangeListener mOnStateChangeListener;
+    private BaseItemFactory mBaseItemFactory;
 
     public SimpleRichEditor(Context context) {
         super(context);
@@ -303,10 +322,11 @@ public class SimpleRichEditor extends RichEditor {
         if (needItalic) mFreeItems.add(ItemIndex.ITALIC);
         if (needStrikeThrough) mFreeItems.add(ItemIndex.STRIKE_THROUGH);
 
-        mLuBottomMenu.addRootItem(DefaultItemFactory.generateAItem(getContext()))
-                .addItem(ItemIndex.A, needBold ? DefaultItemFactory.generateBoldItem(
+        mLuBottomMenu.addRootItem( getBaseItemFactory().generateItem(getContext(),ItemIndex.A))
+                .addItem(ItemIndex.A, needBold ? getBaseItemFactory().generateItem(
                         getContext(),
-                        new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+                        ItemIndex.BOLD,
+                        new IBottomMenuItem.OnBottomItemClickListener() {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setBold();
@@ -316,9 +336,10 @@ public class SimpleRichEditor extends RichEditor {
                                 return isInSelectController(item.getId());
                             }
                         }) : null)
-                .addItem(ItemIndex.A, needItalic ? DefaultItemFactory.generateItalicItem(
+                .addItem(ItemIndex.A, needItalic ? getBaseItemFactory().generateItem(
                         getContext(),
-                        new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+                        ItemIndex.ITALIC,
+                        new IBottomMenuItem.OnBottomItemClickListener() {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setItalic();
@@ -327,9 +348,10 @@ public class SimpleRichEditor extends RichEditor {
                                 return isInSelectController(item.getId());
                             }
                         }) : null)
-                .addItem(ItemIndex.A, needStrikeThrough ? DefaultItemFactory.generateStrikeThroughItem(
+                .addItem(ItemIndex.A, needStrikeThrough ? getBaseItemFactory().generateItem(
                         getContext(),
-                        new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+                        ItemIndex.STRIKE_THROUGH,
+                        new IBottomMenuItem.OnBottomItemClickListener() {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setStrikeThrough();
@@ -338,9 +360,10 @@ public class SimpleRichEditor extends RichEditor {
                                 return isInSelectController(item.getId());
                             }
                         }) : null)
-                .addItem(ItemIndex.A, needBlockQuote ? DefaultItemFactory.generateBlockQuoteItem(
+                .addItem(ItemIndex.A, needBlockQuote ? getBaseItemFactory().generateItem(
                         getContext(),
-                        new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+                        ItemIndex.BLOCK_QUOTE,
+                        new IBottomMenuItem.OnBottomItemClickListener() {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setBlockquote(!isSelected);
@@ -351,9 +374,10 @@ public class SimpleRichEditor extends RichEditor {
                             }
                         }) : null)
 
-                .addItem(ItemIndex.A, needH ? DefaultItemFactory.generateH1Item(
+                .addItem(ItemIndex.A, needH ? getBaseItemFactory().generateItem(
                         getContext(),
-                        new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+                        ItemIndex.H1,
+                        new IBottomMenuItem.OnBottomItemClickListener() {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setHeading(1, !isSelected);
@@ -363,9 +387,10 @@ public class SimpleRichEditor extends RichEditor {
                                 return isInSelectController(item.getId());
                             }
                         }) : null)
-                .addItem(ItemIndex.A, needH ? DefaultItemFactory.generateH2Item(
+                .addItem(ItemIndex.A, needH ? getBaseItemFactory().generateItem(
                         getContext(),
-                        new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+                        ItemIndex.H2,
+                        new IBottomMenuItem.OnBottomItemClickListener() {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setHeading(2, !isSelected);
@@ -373,9 +398,10 @@ public class SimpleRichEditor extends RichEditor {
                                 return isInSelectController(item.getId());
                             }
                         }) : null)
-                .addItem(ItemIndex.A, needH ? DefaultItemFactory.generateH3Item(
+                .addItem(ItemIndex.A, needH ? getBaseItemFactory().generateItem(
                         getContext(),
-                        new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+                        ItemIndex.H3,
+                        new IBottomMenuItem.OnBottomItemClickListener() {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setHeading(3, !isSelected);
@@ -383,9 +409,10 @@ public class SimpleRichEditor extends RichEditor {
                                 return isInSelectController(item.getId());
                             }
                         }) : null)
-                .addItem(ItemIndex.A, needH ? DefaultItemFactory.generateH4Item(
+                .addItem(ItemIndex.A, needH ? getBaseItemFactory().generateItem(
                         getContext(),
-                        new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+                        ItemIndex.H4,
+                        new IBottomMenuItem.OnBottomItemClickListener() {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setHeading(4, !isSelected);
@@ -399,7 +426,10 @@ public class SimpleRichEditor extends RichEditor {
     public SimpleRichEditor addImageInsert() {
         checkNull(mLuBottomMenu);
 
-        mLuBottomMenu.addRootItem(DefaultItemFactory.generateInsertImageItem(getContext(), new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+        mLuBottomMenu.addRootItem(getBaseItemFactory().generateItem(
+                getContext(),
+                ItemIndex.INSERT_IMAGE,
+                new IBottomMenuItem.OnBottomItemClickListener() {
             @Override
             public boolean onItemClick(MenuItem item, boolean isSelected) {
                 showImagePicker();
@@ -414,10 +444,11 @@ public class SimpleRichEditor extends RichEditor {
 
         if (!needHalvingLine && !needLink)
             return this;
-        mLuBottomMenu.addRootItem(DefaultItemFactory.generateMoreItem(getContext()))
-                .addItem(ItemIndex.MORE, needHalvingLine ? DefaultItemFactory.generateHalvingLineItem(
+        mLuBottomMenu.addRootItem(getBaseItemFactory().generateItem(getContext(),ItemIndex.MORE))
+                .addItem(ItemIndex.MORE, needHalvingLine ? getBaseItemFactory().generateItem(
                         getContext(),
-                        new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+                        ItemIndex.HALVING_LINE,
+                        new IBottomMenuItem.OnBottomItemClickListener() {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 insertHr();
@@ -426,9 +457,10 @@ public class SimpleRichEditor extends RichEditor {
                             }
                         }
                 ) : null)
-                .addItem(ItemIndex.MORE, needLink ? DefaultItemFactory.generateLinkItem(
+                .addItem(ItemIndex.MORE, needLink ? getBaseItemFactory().generateItem(
                         getContext(),
-                        new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+                        ItemIndex.LINK,
+                        new IBottomMenuItem.OnBottomItemClickListener() {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 showLinkDialog();
@@ -444,7 +476,10 @@ public class SimpleRichEditor extends RichEditor {
     public SimpleRichEditor addUndo() {
         checkNull(mLuBottomMenu);
 
-        mLuBottomMenu.addRootItem(DefaultItemFactory.generateUndoItem(getContext(), new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+        mLuBottomMenu.addRootItem(getBaseItemFactory().generateItem(
+                getContext(),
+                ItemIndex.UNDO,
+                new IBottomMenuItem.OnBottomItemClickListener() {
             @Override
             public boolean onItemClick(MenuItem item, boolean isSelected) {
                 undo();
@@ -457,7 +492,9 @@ public class SimpleRichEditor extends RichEditor {
     public SimpleRichEditor addRedo() {
         checkNull(mLuBottomMenu);
 
-        mLuBottomMenu.addRootItem(DefaultItemFactory.generateRedoItem(getContext(), new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+        mLuBottomMenu.addRootItem(getBaseItemFactory().generateItem(getContext(),
+                ItemIndex.REDO,
+                new IBottomMenuItem.OnBottomItemClickListener() {
             @Override
             public boolean onItemClick(MenuItem item, boolean isSelected) {
                 redo();

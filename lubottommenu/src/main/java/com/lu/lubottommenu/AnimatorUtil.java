@@ -17,10 +17,10 @@ import android.view.ViewGroup;
  */
 
 class AnimatorUtil {
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     static void show(final LuBottomMenu luBottomMenu, final long duration){
 
         luBottomMenu.post(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void run() {
                 final ViewGroup.MarginLayoutParams layoutParams= (ViewGroup.MarginLayoutParams) luBottomMenu.getLayoutParams();
