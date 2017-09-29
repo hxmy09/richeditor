@@ -38,8 +38,10 @@ public class SimpleRichEditor extends RichEditor {
         this.mOnStateChangeListener = mOnStateChangeListener;
     }
 
-    public <T extends AbstractBottomMenuItem> BaseItemFactory<T> getBaseItemFactory() {
-        return mBaseItemFactory == null ? createDefaultFactory() : mBaseItemFactory;
+    public BaseItemFactory getBaseItemFactory() {
+        if(mBaseItemFactory == null)
+            mBaseItemFactory = createDefaultFactory() ;
+        return mBaseItemFactory;
     }
 
     private DefaultItemFactory createDefaultFactory(){
