@@ -1,8 +1,7 @@
 'use strict';
 'use struct';
 
-function HashMap()
- {
+function HashMap(){
      /** Map 大小 **/
      var size = 0;
      /** 对象 **/
