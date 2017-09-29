@@ -237,6 +237,12 @@ var RE = {
 			_self.getEditItem({});
 		}
 	},
+	oldExec:function oldExec(command) {
+	    var _self = this;
+	    var value = '<' + command + '>';
+        document.execCommand('formatBlock', false, value);
+        console.log(_self.getHtml());
+	},
 	getEditItem: function getEditItem(evt) {
 		//通过点击时，去获得一个当前位置的所有状态
 		var _self = this;

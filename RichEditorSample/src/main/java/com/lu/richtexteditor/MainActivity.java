@@ -21,6 +21,7 @@ import com.lu.base.depence.retrofit.uploader.beans.UploadProgress;
 import com.lu.base.depence.tools.SizeUtil;
 import com.lu.base.depence.tools.Utils;
 import com.lu.lubottommenu.LuBottomMenu;
+import com.lu.lubottommenu.api.IBottomMenuItem;
 import com.lu.lubottommenu.api.ITheme;
 import com.lu.lubottommenu.logiclist.MenuItem;
 import com.lu.lubottommenu.logiclist.MenuItemFactory;
@@ -167,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
         mRichTextView.setLuBottomMenu(mLuBottomMenu);
 
         ImageViewButtonItem themeItem = MenuItemFactory.generateImageItem(this, R.drawable.theme, false);
-        themeItem.setOnItemClickListener(new ImageViewButtonItem.OnImageViewButtonItemClickListener() {
+        themeItem.setOnItemClickListener(new IBottomMenuItem.OnBottomItemClickListener() {
             @Override
             public boolean onItemClick(MenuItem item, boolean isSelected) {
                 if (!isSelected) {

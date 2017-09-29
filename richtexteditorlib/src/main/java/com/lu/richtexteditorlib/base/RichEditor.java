@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static android.os.Build.VERSION.SDK;
+
 @SuppressWarnings({"unused"})
 public abstract class RichEditor extends WebView {
 
@@ -282,9 +284,17 @@ public abstract class RichEditor extends WebView {
     }
 
     public void setBold() {
+
         exec("javascript:RE.saveRange();");
-        exec("javascript:RE.exec('bold');");
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            exec("javascript:RE.exec('bold');");
+//        }else {
+            exec("javascript:RE.oldExec('strong');");
+            exec("javascript:RE.reduceRange()");
+//        }
     }
+
+
 
     public void setItalic() {
         exec("javascript:RE.saveRange();");

@@ -16,6 +16,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 
+import com.lu.lubottommenu.api.IBottomMenuItem;
 import com.lu.lubottommenu.api.ITheme;
 import com.lu.lubottommenu.logiclist.MenuItem;
 import com.lu.lubottommenu.logiclist.MenuItemTree;
@@ -644,7 +645,7 @@ public class LuBottomMenu extends ViewGroup {
         colorSet = theme.getBackGroundColors();
 
         if(mDisplayMenus != null && !mDisplayMenus.isEmpty()){
-            Set<Map.Entry<Long,AbstractBottomMenuItem>> entries = mBottomMenuItems.entrySet();
+            Set<Map.Entry<Long, AbstractBottomMenuItem>> entries = mBottomMenuItems.entrySet();
             for (Map.Entry<Long, AbstractBottomMenuItem> e :
                    entries ) {
                 e.getValue().setThemeForDisplay(mTheme);
