@@ -1,8 +1,7 @@
 'use strict';
 'use struct';
 
-function HashMap()
- {
+function HashMap(){
      /** Map 大小 **/
      var size = 0;
      /** 对象 **/
@@ -236,12 +235,6 @@ var RE = {
 			document.execCommand('formatBlock', false, value);
 			_self.getEditItem({});
 		}
-	},
-	oldExec:function oldExec(command) {
-	    var _self = this;
-	    var value = '<' + command + '>';
-        document.execCommand('formatBlock', false, value);
-        console.log(_self.getHtml());
 	},
 	getEditItem: function getEditItem(evt) {
 		//通过点击时，去获得一个当前位置的所有状态
