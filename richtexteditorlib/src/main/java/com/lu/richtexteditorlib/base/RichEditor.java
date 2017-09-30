@@ -286,12 +286,7 @@ public abstract class RichEditor extends WebView {
     public void setBold() {
 
         exec("javascript:RE.saveRange();");
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            exec("javascript:RE.exec('bold');");
-//        }else {
-            exec("javascript:RE.oldExec('strong');");
-            exec("javascript:RE.reduceRange()");
-//        }
+        exec("javascript:RE.exec('bold');");
     }
 
 
