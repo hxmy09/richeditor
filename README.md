@@ -42,8 +42,17 @@ android4.4及以上版本
 - 主题切换
 <br/>
 
+### 富文本实践系列文章
+
+[移动端富文本实践篇(一)](https://github.com/laizimo/zimo-article/issues/31)
+
+[移动端富文本实践篇(二)](https://github.com/laizimo/zimo-article/issues/32)
+
+[移动端富文本实践篇(三)](https://github.com/laizimo/zimo-article/issues/33)
+
+[移动端富文本实践篇(四)](https://github.com/laizimo/zimo-article/issues/34)
+
 ## 演示示例
-<img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor1.gif" />
-<img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor2.gif" />
+<img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor1.gif" /><img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor2.gif" />
 
 
