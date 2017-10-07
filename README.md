@@ -53,6 +53,6 @@ android4.4及以上版本
 [移动端富文本实践篇(四)](https://github.com/laizimo/zimo-article/issues/34)
 
 ## 演示示例
-<img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor1.gif" /><img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor2.gif" />
+<img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor1.gif" />    <img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor2.gif" />
 
 
