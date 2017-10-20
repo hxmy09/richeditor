@@ -55,4 +55,7 @@ android4.4及以上版本
 ## 演示示例
 <img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor1.gif" />    <img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor2.gif" />
 
+# LICENSE
+
+LICENSE [MIT](https://github.com/nowandfurure/richeditor/blob/master/LICENSE)
 
