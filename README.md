@@ -18,11 +18,9 @@
 - 风格统一
 <br/>
 
-### 即将完成
-- 主题风格切换
-- andriod4.0 ~ andriod4.4 js适配
-- 图片在被软键盘删除时的回调
-<br/>
+### 支持版本
+
+android4.4及以上版本
 
 ### 已有效果
 - 粗体
@@ -33,20 +31,28 @@
 - 插入图片
 - 插入链接
 - 插入分割线
-- 点击已插入的链接回调
-- 点击已插入图片回调
-- 设置图片进度条
-- 设置图片加载失败
-- 字数监听回调
+- 链接修改
+- 图片点击删除
+- 图片进度条现实
+- 图片加载失败显示
+- 字数显示
 - 撤销（undo）
 - 重做（redo）
-- 异步（同步）获取HTML内容
-- 标题栏聚焦（失去焦点）回调
-- 光标所在位置状态回调
+- 发布内容
+- 主题切换
 <br/>
 
+### 富文本实践系列文章
+
+[移动端富文本实践篇(一)](https://github.com/laizimo/zimo-article/issues/31)
+
+[移动端富文本实践篇(二)](https://github.com/laizimo/zimo-article/issues/32)
+
+[移动端富文本实践篇(三)](https://github.com/laizimo/zimo-article/issues/33)
+
+[移动端富文本实践篇(四)](https://github.com/laizimo/zimo-article/issues/34)
+
 ## 演示示例
-<img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor1.gif" />
-<img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor2.gif" />
+<img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor1.gif" />    <img src="https://github.com/nowandfurure/richeditor/blob/master/richeditor2.gif" />
 
 
