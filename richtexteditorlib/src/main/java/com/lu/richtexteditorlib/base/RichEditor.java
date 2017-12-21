@@ -229,10 +229,7 @@ public abstract class RichEditor extends WebView {
     }
 
     public void load(){
-        Log.e("load","before load");
         loadUrl(SETUP_HTML);
-        Log.e("load","after load");
-
     }
 
     @Override
@@ -260,19 +257,6 @@ public abstract class RichEditor extends WebView {
 
     public void setPlaceholder(String placeholder) {
         exec("javascript:RE.setPlaceholder('" + placeholder + "');");
-    }
-
-    public void loadCSS(String cssFile) {
-        String jsCSSImport = "(function() {" +
-                "    var head  = document.getElementsByTagName(\"head\")[0];" +
-                "    var link  = document.createElement(\"link\");" +
-                "    link.rel  = \"stylesheet\";" +
-                "    link.type = \"text/css\";" +
-                "    link.href = \"" + cssFile + "\";" +
-                "    link.media = \"all\";" +
-                "    head.appendChild(link);" +
-                "}) ();";
-        exec("javascript:" + jsCSSImport + "");
     }
 
     public void undo() {
