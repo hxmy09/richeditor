@@ -157,6 +157,7 @@ var RE = {
 
 		_self.cache.editor.addEventListener('input', function () {
 			AndroidInterface.staticWords(_self.staticWords());
+			AndroidInterface.setHtmlContent(_self.getHtml());
 		}, false);
 	},
 	initCache: function initCache() {
@@ -252,6 +253,7 @@ var RE = {
 		} else {
 			if (evt.which == 8) {
 				AndroidInterface.staticWords(_self.staticWords());
+				AndroidInterface.setHtmlContent(_self.getHtml());
 			}
 			var items = [];
 			_self.commandSet.forEach(function (item) {
