@@ -4,12 +4,11 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.text.method.HideReturnsTransformationMethod;
 import android.view.View;
 
 import com.lu.lubottommenu.api.IBottomMenuItem;
 import com.lu.lubottommenu.api.ITheme;
-import com.lu.lubottommenu.logiclist.MenuItem;
+import com.lu.lubottommenu.logiccollection.MenuItem;
 
 import java.io.Serializable;
 
@@ -79,7 +78,7 @@ public abstract class AbstractBottomMenuItem<T extends View> implements IBottomM
      */
     public abstract void settingAfterCreate(boolean isSelected, T view);
 
-    public void onSelectChange(boolean isSelected){
+    public void onSelectChanged(boolean isSelected){
         //do nothing
     }
 
@@ -112,7 +111,7 @@ public abstract class AbstractBottomMenuItem<T extends View> implements IBottomM
 
     public final void setSelected(boolean selected) {
         if(selected != isSelected)
-            onSelectChange(selected);
+            onSelectChanged(selected);
         isSelected = selected;
     }
 

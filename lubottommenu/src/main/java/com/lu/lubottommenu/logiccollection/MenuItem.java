@@ -1,7 +1,5 @@
-package com.lu.lubottommenu.logiclist;
+package com.lu.lubottommenu.logiccollection;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.view.View;
 
 import java.io.Serializable;

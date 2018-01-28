@@ -5,12 +5,12 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.ColorUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 
-import com.lu.lubottommenu.LuBottomMenu;
 import com.lu.lubottommenu.api.IBottomMenuItem;
+import com.lu.lubottommenu.api.IMultiMenu;
 import com.lu.lubottommenu.api.ITheme;
-import com.lu.lubottommenu.logiclist.MenuItem;
+import com.lu.lubottommenu.api.IThemeMenu;
+import com.lu.lubottommenu.logiccollection.MenuItem;
 import com.lu.lubottommenu.menuitem.AbstractBottomMenuItem;
 import com.lu.lubottommenu.theme.AbstractTheme;
 import com.lu.lubottommenu.theme.DarkTheme;
@@ -91,7 +91,7 @@ public class SimpleRichEditor extends RichEditor {
         }
     }
 
-    private LuBottomMenu mLuBottomMenu;
+    private IMultiMenu mMultiBottomMenu;
     private SelectController mSelectController;
     private OnEditorClickListener mOnEditorClickListener;
     private ArrayList<Long> mFreeItems;//不受其他items点击事件影响的items
@@ -110,8 +110,8 @@ public class SimpleRichEditor extends RichEditor {
     public SimpleRichEditor(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-    public void setLuBottomMenu(@NonNull LuBottomMenu mLuBottomMenu) {
-        this.mLuBottomMenu = mLuBottomMenu;
+    public void setBottomMenu(@NonNull IMultiMenu multiMenu) {
+        this.mMultiBottomMenu = multiMenu;
         init();
         initRichTextViewListeners();
     }
@@ -132,7 +132,7 @@ public class SimpleRichEditor extends RichEditor {
         addRedo();
 
 //        等效与以下
-//       mLuBottomMenu.
+//       mMultiBottomMenu.
 //                addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x01, R.drawable.insert_image, false)).//
 //                addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x02, R.drawable.a)).//
 //                addRootItem(MenuItemFactory.generateImageItem(getContext(), 0x03, R.drawable.more)).//
@@ -149,7 +149,7 @@ public class SimpleRichEditor extends RichEditor {
 //                addItem(0x02, MenuItemFactory.generateImageItem(getContext(), 0x0d, R.drawable.h4)).
 //                addItem(0x03, MenuItemFactory.generateImageItem(getContext(), 0x0e, R.drawable.halving_line, false)).
 //                addItem(0x03, MenuItemFactory.generateImageItem(getContext(), 0x0f, R.drawable.link, false));
-        //mLuBottomMenu.setOnItemClickListener(this);
+        //mMultiBottomMenu.setOnItemClickListener(this);
 
         //mSelectController.addAll(0x09L, 0x0aL, 0x0bL, 0x0cL, 0x0dL);
 
@@ -158,13 +158,13 @@ public class SimpleRichEditor extends RichEditor {
             @Override
             public void handleA2B(long id) {
                 if (id > 0)
-                    mLuBottomMenu.setItemSelected(id, true);
+                    mMultiBottomMenu.setItemSelected(id, true);
             }
 
             @Override
             public void handleB2A(long id) {
                 if (id > 0)
-                    mLuBottomMenu.setItemSelected(id, false);
+                    mMultiBottomMenu.setItemSelected(id, false);
             }
         });
     }
@@ -178,13 +178,13 @@ public class SimpleRichEditor extends RichEditor {
 
                 for (long id :
                         mFreeItems) {
-                    mLuBottomMenu.setItemSelected(id, false);
+                    mMultiBottomMenu.setItemSelected(id, false);
                 }
                 mSelectController.reset();
                 for (RichEditor.Type t :
                         types) {
                     if (!mSelectController.contain(t.getTypeCode()))
-                        mLuBottomMenu.setItemSelected(t.getTypeCode(), true);
+                        mMultiBottomMenu.setItemSelected(t.getTypeCode(), true);
                     else
                         mSelectController.changeState(t.getTypeCode());
                 }
@@ -202,10 +202,12 @@ public class SimpleRichEditor extends RichEditor {
             public void onFocusChange(boolean isFocus) {
                 if (!isFocus) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        mLuBottomMenu.show(200);
+                        //if(mMultiBottomMenu instanceof  LuBottomMenu)
+                            mMultiBottomMenu.show(200);
                     }
                 } else {
-                    mLuBottomMenu.hide(200);
+                    //if(mMultiBottomMenu instanceof  LuBottomMenu)
+                        mMultiBottomMenu.hide(200);
                 }
 
             }
@@ -272,17 +274,20 @@ public class SimpleRichEditor extends RichEditor {
 
     public void setTheme(int theme){
         if(theme == AbstractTheme.DARK_THEME) {
-            mLuBottomMenu.setTheme(new DarkTheme());
+            if(mMultiBottomMenu instanceof IThemeMenu)
+                ((IThemeMenu) mMultiBottomMenu).setTheme(new DarkTheme());
             //do something
         }
         else if(theme == AbstractTheme.LIGHT_THEME) {
-            mLuBottomMenu.setTheme(new LightTheme());
+            if(mMultiBottomMenu instanceof IThemeMenu)
+                ((IThemeMenu) mMultiBottomMenu).setTheme(new LightTheme());
             //do something
         }
     }
 
     public void setTheme(final ITheme theme){
-        mLuBottomMenu.setTheme(theme);
+        if(mMultiBottomMenu instanceof IThemeMenu)
+            ((IThemeMenu) mMultiBottomMenu).setTheme(theme);
 
         post(new Runnable() {
             @Override
@@ -313,7 +318,7 @@ public class SimpleRichEditor extends RichEditor {
     }
 
     public SimpleRichEditor addTypefaceBranch(boolean needBold, boolean needItalic, boolean needStrikeThrough, boolean needBlockQuote, boolean needH) {
-        checkNull(mLuBottomMenu);
+        checkNull(mMultiBottomMenu);
 
         if (!(needBlockQuote || needBold || needH || needItalic || needStrikeThrough))
             return this;
@@ -324,7 +329,7 @@ public class SimpleRichEditor extends RichEditor {
         if (needItalic) mFreeItems.add(ItemIndex.ITALIC);
         if (needStrikeThrough) mFreeItems.add(ItemIndex.STRIKE_THROUGH);
 
-        mLuBottomMenu.addRootItem( getBaseItemFactory().generateItem(getContext(),ItemIndex.A))
+        mMultiBottomMenu.addRootItem( getBaseItemFactory().generateItem(getContext(),ItemIndex.A))
                 .addItem(ItemIndex.A, needBold ? getBaseItemFactory().generateItem(
                         getContext(),
                         ItemIndex.BOLD,
@@ -332,7 +337,7 @@ public class SimpleRichEditor extends RichEditor {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setBold();
-                                Log.e("onItemClick",item.getId()+"");
+                                //Log.e("onItemClick",item.getId()+"");
 
                                 //不拦截不在选择控制器中的元素让Menu自己控制选择显示效果
                                 return isInSelectController(item.getId());
@@ -345,7 +350,7 @@ public class SimpleRichEditor extends RichEditor {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setItalic();
-                                Log.e("onItemClick",item.getId()+"");
+                                //Log.e("onItemClick",item.getId()+"");
 
                                 return isInSelectController(item.getId());
                             }
@@ -357,7 +362,7 @@ public class SimpleRichEditor extends RichEditor {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setStrikeThrough();
-                                Log.e("onItemClick",item.getId()+"");
+                                //Log.e("onItemClick",item.getId()+"");
 
                                 return isInSelectController(item.getId());
                             }
@@ -369,7 +374,7 @@ public class SimpleRichEditor extends RichEditor {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setBlockquote(!isSelected);
-                                Log.e("onItemClick",item.getId()+"");
+                                //Log.e("onItemClick",item.getId()+"");
 
                                 //mSelectController.changeState(ItemIndex.BLOCK_QUOTE);
                                 return isInSelectController(item.getId());
@@ -383,7 +388,6 @@ public class SimpleRichEditor extends RichEditor {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 setHeading(1, !isSelected);
-                                Log.e("onItemClick",item.getId()+"");
 
                                 //mSelectController.changeState(ItemIndex.H1);
                                 return isInSelectController(item.getId());
@@ -426,9 +430,9 @@ public class SimpleRichEditor extends RichEditor {
     }
 
     public SimpleRichEditor addImageInsert() {
-        checkNull(mLuBottomMenu);
+        checkNull(mMultiBottomMenu);
 
-        mLuBottomMenu.addRootItem(getBaseItemFactory().generateItem(
+        mMultiBottomMenu.addRootItem(getBaseItemFactory().generateItem(
                 getContext(),
                 ItemIndex.INSERT_IMAGE,
                 new IBottomMenuItem.OnBottomItemClickListener() {
@@ -442,11 +446,11 @@ public class SimpleRichEditor extends RichEditor {
     }
 
     public SimpleRichEditor addMoreBranch(boolean needHalvingLine, boolean needLink) {
-        checkNull(mLuBottomMenu);
+        checkNull(mMultiBottomMenu);
 
         if (!needHalvingLine && !needLink)
             return this;
-        mLuBottomMenu.addRootItem(getBaseItemFactory().generateItem(getContext(),ItemIndex.MORE))
+        mMultiBottomMenu.addRootItem(getBaseItemFactory().generateItem(getContext(),ItemIndex.MORE))
                 .addItem(ItemIndex.MORE, needHalvingLine ? getBaseItemFactory().generateItem(
                         getContext(),
                         ItemIndex.HALVING_LINE,
@@ -454,7 +458,7 @@ public class SimpleRichEditor extends RichEditor {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 insertHr();
-                                Log.e("onItemClick",item.getId()+"");
+                                //Log.e("onItemClick",item.getId()+"");
                                 return false;
                             }
                         }
@@ -466,7 +470,7 @@ public class SimpleRichEditor extends RichEditor {
                             @Override
                             public boolean onItemClick(MenuItem item, boolean isSelected) {
                                 showLinkDialog();
-                                Log.e("onItemClick",item.getId()+"");
+                                //Log.e("onItemClick",item.getId()+"");
 
                                 return false;
                             }
@@ -476,9 +480,9 @@ public class SimpleRichEditor extends RichEditor {
     }
 
     public SimpleRichEditor addUndo() {
-        checkNull(mLuBottomMenu);
+        checkNull(mMultiBottomMenu);
 
-        mLuBottomMenu.addRootItem(getBaseItemFactory().generateItem(
+        mMultiBottomMenu.addRootItem(getBaseItemFactory().generateItem(
                 getContext(),
                 ItemIndex.UNDO,
                 new IBottomMenuItem.OnBottomItemClickListener() {
@@ -492,9 +496,9 @@ public class SimpleRichEditor extends RichEditor {
     }
 
     public SimpleRichEditor addRedo() {
-        checkNull(mLuBottomMenu);
+        checkNull(mMultiBottomMenu);
 
-        mLuBottomMenu.addRootItem(getBaseItemFactory().generateItem(getContext(),
+        mMultiBottomMenu.addRootItem(getBaseItemFactory().generateItem(getContext(),
                 ItemIndex.REDO,
                 new IBottomMenuItem.OnBottomItemClickListener() {
             @Override
@@ -508,7 +512,7 @@ public class SimpleRichEditor extends RichEditor {
 
     @SuppressWarnings("unused")
     public SimpleRichEditor addCustomItem(long parentId, long id, AbstractBottomMenuItem item) {
-        checkNull(mLuBottomMenu);
+        checkNull(mMultiBottomMenu);
 
         if (!mRegister.hasRegister(parentId)) {
             throw new RuntimeException(parentId + ":" + ItemIndex.NO_REGISTER_EXCEPTION);
@@ -520,19 +524,19 @@ public class SimpleRichEditor extends RichEditor {
             mRegister.register(id);
 
         item.getMenuItem().setId(id);
-        mLuBottomMenu.addItem(parentId, item);
+        mMultiBottomMenu.addItem(parentId, item);
         return this;
     }
 
     public SimpleRichEditor addRootCustomItem(long id, AbstractBottomMenuItem item) {
-        checkNull(mLuBottomMenu);
+        checkNull(mMultiBottomMenu);
 
         if (mRegister.isDefaultId(id))
             throw new RuntimeException(id + ":" + ItemIndex.HAS_REGISTER_EXCEPTION);
         if (!mRegister.hasRegister(id))
             mRegister.register(id);
         item.getMenuItem().setId(id);
-        mLuBottomMenu.addRootItem(item);
+        mMultiBottomMenu.addRootItem(item);
         return this;
     }
 

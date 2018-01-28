@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.widget.TextView;
 
-import com.lu.lubottommenu.logiclist.MenuItem;
+import com.lu.lubottommenu.logiccollection.MenuItem;
 
 /**
  *
@@ -36,11 +36,11 @@ public class TextViewItem extends AbstractBottomMenuItem<TextView> {
 
     @Override
     public void settingAfterCreate(boolean isSelected, TextView view) {
-        onSelectChange(isSelected);
+        onSelectChanged(isSelected);
     }
 
     @Override
-    public void onSelectChange(boolean isSelected) {
+    public void onSelectChanged(boolean isSelected) {
         TextView textView = (TextView) getMainView();
         if(textView != null) {
             if (isSelected) {

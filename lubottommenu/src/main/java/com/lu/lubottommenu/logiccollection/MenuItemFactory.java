@@ -1,4 +1,4 @@
-package com.lu.lubottommenu.logiclist;
+package com.lu.lubottommenu.logiccollection;
 
 import android.content.Context;
 import android.view.View;

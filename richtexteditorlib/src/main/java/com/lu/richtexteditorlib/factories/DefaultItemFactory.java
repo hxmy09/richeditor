@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.DrawableRes;
 
 import com.lu.lubottommenu.api.IBottomMenuItem;
-import com.lu.lubottommenu.logiclist.MenuItemFactory;
+import com.lu.lubottommenu.logiccollection.MenuItemFactory;
 import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
 import com.lu.richtexteditorlib.R;
 import com.lu.richtexteditorlib.constant.ItemIndex;

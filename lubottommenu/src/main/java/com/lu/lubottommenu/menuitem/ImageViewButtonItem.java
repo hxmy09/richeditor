@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.lu.lubottommenu.R;
-import com.lu.lubottommenu.logiclist.MenuItem;
+import com.lu.lubottommenu.logiccollection.MenuItem;
 
 /**
  *
@@ -75,7 +75,7 @@ public class ImageViewButtonItem extends AbstractBottomMenuItem<ImageButton> imp
     }
 
     @Override
-    public void onSelectChange(boolean isSelected) {
+    public void onSelectChanged(boolean isSelected) {
         ImageButton imageViewButton = getMainView();
         if (imageViewButton == null) return;
         settingAfterCreate(isSelected, imageViewButton);

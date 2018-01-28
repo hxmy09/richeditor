@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
 
-import com.lu.lubottommenu.logiclist.MenuItem;
+import com.lu.lubottommenu.logiccollection.MenuItem;
 
 /**
  * Created by 陆正威 on 2017/9/6.
@@ -27,5 +27,6 @@ public interface IBottomMenuItem {
     interface OnBottomItemClickListener{
         boolean onItemClick(MenuItem item,boolean isSelected);
     }
+
 
 }

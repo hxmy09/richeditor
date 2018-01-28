@@ -3,7 +3,6 @@ package com.lu.richtexteditor;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
@@ -22,11 +21,9 @@ import com.lu.base.depence.tools.SizeUtil;
 import com.lu.base.depence.tools.Utils;
 import com.lu.lubottommenu.LuBottomMenu;
 import com.lu.lubottommenu.api.IBottomMenuItem;
-import com.lu.lubottommenu.api.ITheme;
-import com.lu.lubottommenu.logiclist.MenuItem;
-import com.lu.lubottommenu.logiclist.MenuItemFactory;
+import com.lu.lubottommenu.logiccollection.MenuItem;
+import com.lu.lubottommenu.logiccollection.MenuItemFactory;
 import com.lu.lubottommenu.menuitem.ImageViewButtonItem;
-import com.lu.lubottommenu.theme.AbstractTheme;
 import com.lu.lubottommenu.theme.BaseTheme;
 import com.lu.lubottommenu.theme.DarkTheme;
 import com.lu.lubottommenu.theme.LightTheme;
@@ -99,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
                     data.getStringArrayListExtra(PhotoPickerActivity.EXTRA_RESULT_SELECTION);
 
             long id;
-            // TODO: 2017/9/14 可以在线程中添加这段代码防止主线程卡顿
+            // 可以在线程中添加这段代码防止主线程卡顿
             for (String path :
                     pathList) {
                 id = SystemClock.currentThreadTimeMillis();
@@ -165,8 +162,9 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
                 });
             }
         });
-        mRichTextView.setLuBottomMenu(mLuBottomMenu);
+        mRichTextView.setBottomMenu(mLuBottomMenu);
 
+        //show how to set custom bottom menu item
         ImageViewButtonItem themeItem = MenuItemFactory.generateImageItem(this, R.drawable.theme, false);
         themeItem.setOnItemClickListener(new IBottomMenuItem.OnBottomItemClickListener() {
             @Override
@@ -305,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements SimpleRichEditor.
                 //发表按钮
                 //do something
                 //such as gethtml
+                Utils.MakeLongToast(mRichTextView.getHtml());
                 break;
         }
     }

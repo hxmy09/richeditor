@@ -273,7 +273,9 @@ public abstract class RichEditor extends WebView {
         exec("javascript:RE.exec('bold');");
     }
 
-
+    public void setHtml(String html){
+        //exec("javascript:RE.set");
+    }
 
     public void setItalic() {
         exec("javascript:RE.saveRange();");
@@ -375,7 +377,7 @@ public abstract class RichEditor extends WebView {
         }
     }
 
-    protected class EditorWebVIewClient2 extends WebChromeClient{
+    protected class EditorWebViewClient2 extends WebChromeClient{
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
@@ -391,7 +393,7 @@ public abstract class RichEditor extends WebView {
         @Override
         public void onPageFinished(WebView view, String url) {
             isReady = url.equalsIgnoreCase(SETUP_HTML);
-            Log.e("load","after onPageFinished");
+            //Log.d("load","after onPageFinished");
 
             if (mLoadListener != null) {
                 mLoadListener.onAfterInitialLoad(isReady);
@@ -410,7 +412,7 @@ public abstract class RichEditor extends WebView {
                 return false;
             }
 
-            Log.e("decode",decode);
+            //Log.d("decode",decode);
 
             if (TextUtils.indexOf(url, CALLBACK_SCHEME) == 0) {
                 callback(decode);

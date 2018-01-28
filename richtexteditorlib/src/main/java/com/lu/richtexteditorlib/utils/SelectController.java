@@ -8,6 +8,7 @@ import java.util.Collections;
 
 /**
  * 双状态选择控制器，保证其中的选择是互斥的
+ * to ensure the selects are mutual exclusion,only one action can be active at one time.
  * Created by 陆正威 on 2017/9/12.
  */
 

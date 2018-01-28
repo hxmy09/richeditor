@@ -9,17 +9,17 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 
-import com.lu.lubottommenu.api.IBottomMenuItem;
+import com.lu.lubottommenu.api.IMultiMenu;
 import com.lu.lubottommenu.api.ITheme;
-import com.lu.lubottommenu.logiclist.MenuItem;
-import com.lu.lubottommenu.logiclist.MenuItemTree;
+import com.lu.lubottommenu.api.IThemeMenu;
+import com.lu.lubottommenu.logiccollection.MenuItem;
+import com.lu.lubottommenu.logiccollection.MenuItemTree;
 import com.lu.lubottommenu.menuitem.AbstractBottomMenuItem;
 import com.lu.lubottommenu.theme.LightTheme;
 
@@ -36,7 +36,7 @@ import java.util.Set;
  * Created by 陆正威 on 2017/9/6.
  */
 @SuppressWarnings({"unchecked", "unused", "WeakerAccess"})
-public class LuBottomMenu extends ViewGroup {
+public class LuBottomMenu extends ViewGroup implements IMultiMenu,IThemeMenu {
 
     private final static int DEFAULT_HEIGHT = 54;//dp
 
@@ -598,6 +598,10 @@ public class LuBottomMenu extends ViewGroup {
             return -1;
     }
 
+    /**
+     * @param id 搜索的id,the search id
+     * @return 1:searched 0:not searched ,-1 the id not find
+     */
     public int isItemSelected2(long id) {
         AbstractBottomMenuItem bottomMenuItem = getBottomMenuItem(mMenuTree.getRootItem().getMenuItemById(id));
         if (bottomMenuItem != null)
@@ -606,6 +610,10 @@ public class LuBottomMenu extends ViewGroup {
             return -1;
     }
 
+    /**
+     * @param item search item
+     * @return can be searched ? if not exit it will throw an exception;
+     */
     public boolean isItemSelected(MenuItem item) {
         AbstractBottomMenuItem bottomMenuItem = getBottomMenuItem(item);
         if (bottomMenuItem != null)
@@ -622,6 +630,13 @@ public class LuBottomMenu extends ViewGroup {
             throw new RuntimeException("no item match");
     }
 
+
+    /**
+     * @param num 数量
+     *            设置当单行数量达到的最大阈值来开启滚动模式
+     *            set the max num of a row to enable the scroll-mode for a line
+     *
+     */
     public void setScrollModeNum(int num) {
         MAX_NUM_ONE_ROW = num;
     }
@@ -640,6 +655,7 @@ public class LuBottomMenu extends ViewGroup {
     /**
      * @param theme 主题色：custom theme
      */
+    @Override
     public void setTheme(ITheme theme){
         mTheme = theme;
         colorSet = theme.getBackGroundColors();
@@ -657,7 +673,7 @@ public class LuBottomMenu extends ViewGroup {
             setMenuBackGroundColor(colorSet);
     }
 
-    public LuBottomMenu addRootItem(AbstractBottomMenuItem bottomMenuItem) {
+    public IMultiMenu addRootItem(AbstractBottomMenuItem bottomMenuItem) {
         if (bottomMenuItem == null) return this;
         MenuItem menuItem = bottomMenuItem.getMenuItem();
         mBottomMenuItems.put(menuItem.getId(), bottomMenuItem);
@@ -666,7 +682,7 @@ public class LuBottomMenu extends ViewGroup {
         return this;
     }
 
-    public LuBottomMenu addItem(MenuItem parentItem, AbstractBottomMenuItem bottomMenuItem) {
+    public IMultiMenu addItem(MenuItem parentItem, AbstractBottomMenuItem bottomMenuItem) {
         if (bottomMenuItem == null) return this;
         MenuItem menuItem = bottomMenuItem.getMenuItem();
         if (parentItem == mMenuTree.getRootItem())
@@ -678,7 +694,7 @@ public class LuBottomMenu extends ViewGroup {
         return this;
     }
 
-    public LuBottomMenu addItem(long parentId, AbstractBottomMenuItem bottomMenuItem) {
+    public IMultiMenu addItem(long parentId, AbstractBottomMenuItem bottomMenuItem) {
         if (bottomMenuItem == null) return this;
         MenuItem menuItem = bottomMenuItem.getMenuItem();
 
@@ -687,7 +703,7 @@ public class LuBottomMenu extends ViewGroup {
         return this;
     }
 
-    public LuBottomMenu addItems(long parentId, AbstractBottomMenuItem... menuItems) {
+    public IMultiMenu addItems(long parentId, AbstractBottomMenuItem... menuItems) {
         for (AbstractBottomMenuItem bottomMenuItem :
                 menuItems) {
             addItem(parentId, bottomMenuItem);
@@ -695,7 +711,7 @@ public class LuBottomMenu extends ViewGroup {
         return this;
     }
 
-    public LuBottomMenu addItems(MenuItem parentItem, AbstractBottomMenuItem... menuItems) {
+    public IMultiMenu addItems(MenuItem parentItem, AbstractBottomMenuItem... menuItems) {
         MenuItem menuItem;
         for (AbstractBottomMenuItem bottomMenuItem :
                 menuItems) {
