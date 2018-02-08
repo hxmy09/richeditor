@@ -184,6 +184,7 @@ var RE = {
 	},
 	getHtml: function getHtml() {
 		var _self = this;
+		console.log(_self.cache.editor.innerHTML);
 		return _self.cache.editor.innerHTML;
 	},
 	getTitle: function getTitle() {
@@ -327,7 +328,7 @@ var RE = {
 			newWidth = width;
 			newHeight = height;
 		}
-		var image = '<div><br></div><div class="block">\n\t\t\t\t<div class="img-block"><div style="width: ' + newWidth + 'px" class="process">\n\t\t\t\t\t<div class="fill">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<img class="images" data-id="' + id + '" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px;" src="' + url + '"/>\n\t\t\t\t<div class="cover" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px; margin-left: '+(- 1/2 * newWidth)+'px;"></div>\n\t\t\t\t<div class="delete">\n\t\t\t\t\t<img src="./reload.png">\n\t\t\t\t\t<div class="tips">\u56FE\u7247\u4E0A\u4F20\u5931\u8D25\uFF0C\u8BF7\u70B9\u51FB\u91CD\u8BD5</div>\n\t\t\t\t</div></div>\n\t\t\t\t<input type="text" placeholder="\u8BF7\u8F93\u5165\u56FE\u7247\u540D\u5B57">\n\t\t\t</div><div><br></div>';
+		var image = '<div><br></div><div class="block">\n\t\t\t\t<div class="img-block"><div style="width: ' + newWidth + 'px" class="process">\n\t\t\t\t\t<div class="fill">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<img class="images" data-id="' + id + '" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px;" src="' + url + '"/>\n\t\t\t\t<div class="cover" style="width: ' + newWidth + 'px; height: ' + newHeight + 'px; margin-left: '+(- 1/2 * newWidth)+'px;"></div>\n\t\t\t\t<div class="delete">\n\t\t\t\t\t<img src="./reload.png">\n\t\t\t\t\t<div class="tips">\u56FE\u7247\u4E0A\u4F20\u5931\u8D25\uFF0C\u8BF7\u70B9\u51FB\u91CD\u8BD5</div>\n\t\t\t\t</div></div>\n\t\t\t\t<input type="text" placeholder="\u8BF7\u8F93\u5165\u56FE\u7247\u540D\u5B57" data-value="">\n\t\t\t</div><div><br></div>';
 		_self.insertHtml(image);
 		var img = document.querySelector('img[data-id="' + id + '"]');
 		var imgBlock = img.parentNode;
@@ -338,6 +339,10 @@ var RE = {
 			var img = current.querySelector('.images');
 			var id = img.getAttribute('data-id');
 			window.location.href = _self.schemeCache.IMAGE_SCHEME + encodeURI(id);
+		}, false);
+		var input = imgBlock.querySelector('input');
+		input.addEventListener('input', function (e) {
+			input.setAttribute('data-value', e.target.value);
 		}, false);
 		_self.imageCache.put(id, imgBlock.parentNode);
 	},

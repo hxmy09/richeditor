@@ -399,7 +399,7 @@ const RE = (function(){
 						</div>
 					</div>
 					<img class="images" data-id="${id}" style="width: ${newWidth}px; height: ${newHeight}px;" src="${url}"/>
-					<div class="cover" style="width: ${newWidth}px; height: ${newHeight}px"></div>
+					<div class="cover" style="width: ${newWidth}px; height: ${newHeight}px;"></div>
 					<div class="delete">
 						<img src="./reload.png">
 						<div class="tips">图片上传失败，请点击重试</div>
